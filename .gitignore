@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env.local
+public/audio/*.mp3
+public/lyrics/*.lrc
+public/lyrics/*.words.json
+public/covers/*.jpg
+!public/audio/.gitkeep
+!public/lyrics/.gitkeep
+!public/covers/.gitkeep
