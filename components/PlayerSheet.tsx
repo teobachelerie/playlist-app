@@ -16,8 +16,6 @@ import type { Track } from "@/lib/playlist";
 import Lyrics from "@/components/Lyrics";
 import Queue from "@/components/Queue";
 
-const MINI_HEIGHT = 64; // hauteur visible du mini-lecteur quand la feuille est fermée
-
 type PanelMode = "lyrics" | "cover" | "queue";
 
 function formatTime(seconds: number): string {
@@ -66,7 +64,7 @@ export default function PlayerSheet({
 }) {
   const [panel, setPanel] = useState<PanelMode>("lyrics");
   const [dragY, setDragY] = useState<number | null>(null);
-  const dragStartRef = useRef<{ y: number; wasOpen: boolean } | null>(null);
+  const dragStartYRef = useRef<number | null>(null);
   const [airplaySupported, setAirplaySupported] = useState(false);
 
   useEffect(() => {
@@ -75,40 +73,38 @@ export default function PlayerSheet({
     setAirplaySupported("webkitShowPlaybackTargetPicker" in HTMLMediaElement.prototype);
   }, []);
 
+  // Glissement pour fermer uniquement (la feuille n'est ni visible ni
+  // interactive une fois fermée — l'ouverture se fait depuis la mini-barre
+  // indépendante affichée par le composant parent).
   function handlePointerDown(e: React.PointerEvent) {
-    dragStartRef.current = { y: e.clientY, wasOpen: open };
+    dragStartYRef.current = e.clientY;
     (e.target as Element).setPointerCapture(e.pointerId);
   }
 
   function handlePointerMove(e: React.PointerEvent) {
-    if (!dragStartRef.current) return;
-    const delta = e.clientY - dragStartRef.current.y;
-    setDragY(delta);
+    if (dragStartYRef.current === null) return;
+    const delta = e.clientY - dragStartYRef.current;
+    setDragY(Math.max(delta, 0));
   }
 
   function handlePointerUp() {
     if (dragY === null) {
-      dragStartRef.current = null;
+      dragStartYRef.current = null;
       return;
     }
-    // Seuil de bascule : 30% de l'écran suffit à changer d'état.
-    const threshold = window.innerHeight * 0.3;
-    if (dragStartRef.current?.wasOpen && dragY > threshold) onOpenChange(false);
-    else if (!dragStartRef.current?.wasOpen && dragY < -threshold) onOpenChange(true);
+    // Seuil de bascule : 30% de l'écran suffit à fermer.
+    if (dragY > window.innerHeight * 0.3) onOpenChange(false);
     setDragY(null);
-    dragStartRef.current = null;
+    dragStartYRef.current = null;
   }
 
-  // Position de la feuille : 0 = ouverte plein écran, "closedOffset" = repliée
-  // en mini-lecteur. Pendant le drag on suit le doigt, sinon on snap à l'état.
-  const closedOffset = `calc(100% - ${MINI_HEIGHT}px)`;
+  // Position de la feuille : ouverte = translateY(0), fermée = entièrement
+  // hors écran (translateY(100%)). Pendant le drag on suit le doigt.
   let transform: string;
   if (dragY !== null) {
-    const base = open ? 0 : window.innerHeight - MINI_HEIGHT;
-    const next = Math.min(Math.max(base + dragY, 0), window.innerHeight - MINI_HEIGHT);
-    transform = `translateY(${next}px)`;
+    transform = `translateY(${Math.min(dragY, window.innerHeight)}px)`;
   } else {
-    transform = open ? "translateY(0)" : `translateY(${closedOffset})`;
+    transform = open ? "translateY(0)" : "translateY(100%)";
   }
 
   function handleAirplay() {
@@ -128,46 +124,14 @@ export default function PlayerSheet({
         } as React.CSSProperties
       }
     >
-      {/* Poignée + mini-lecteur regroupés dans une hauteur fixe et exacte
-          (MINI_HEIGHT) — évite tout décalage de calcul qui laisserait
-          dépasser le contenu plein écran en dessous quand la feuille est
-          fermée. */}
-      <div style={{ height: MINI_HEIGHT }} className="flex flex-col shrink-0">
-        <div
-          className="flex-1 flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-        >
-          <div className="w-10 h-1.5 rounded-full bg-white/30" />
-        </div>
-
-        {!open && (
-          <button
-            onClick={() => onOpenChange(true)}
-            className="flex items-center gap-3 px-4 pb-2 text-left flex-1 min-h-0"
-          >
-            {track.coverUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={track.coverUrl} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
-            ) : (
-              <div className="w-10 h-10 rounded bg-white/10 shrink-0" />
-            )}
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-text text-sm">{track.title}</span>
-              <span className="block truncate text-muted text-xs">{track.artist}</span>
-            </span>
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                onTogglePlay();
-              }}
-              className="p-2 text-text"
-            >
-              {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-            </span>
-          </button>
-        )}
+      {/* Poignée de glissement, pour fermer */}
+      <div
+        className="pt-2 pb-1 flex justify-center cursor-grab active:cursor-grabbing touch-none shrink-0"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      >
+        <div className="w-10 h-1.5 rounded-full bg-white/30" />
       </div>
 
       {/* Contenu plein écran */}

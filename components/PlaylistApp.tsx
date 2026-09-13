@@ -5,6 +5,7 @@ import type { Track } from "@/lib/playlist";
 import { shuffleAvoidingSameArtist } from "@/lib/shuffle";
 import TrackList from "@/components/TrackList";
 import PlayerSheet from "@/components/PlayerSheet";
+import MiniPlayerBar from "@/components/MiniPlayerBar";
 
 export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const [order, setOrder] = useState<Track[]>(tracks);
@@ -127,6 +128,15 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
       <div className="h-full overflow-y-auto">
         <TrackList tracks={tracks} currentId={current?.id ?? null} onSelect={selectTrack} />
       </div>
+
+      {current && !sheetOpen && (
+        <MiniPlayerBar
+          track={current}
+          isPlaying={isPlaying}
+          onTogglePlay={togglePlay}
+          onOpen={() => setSheetOpen(true)}
+        />
+      )}
 
       {current && (
         <PlayerSheet
