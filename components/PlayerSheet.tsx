@@ -118,7 +118,7 @@ export default function PlayerSheet({
 
   return (
     <div
-      className="dynamic-bg fixed inset-x-0 bottom-0 h-screen rounded-t-2xl shadow-2xl flex flex-col"
+      className="dynamic-bg fixed inset-x-0 bottom-0 h-screen rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
       style={
         {
           transform,
@@ -128,45 +128,47 @@ export default function PlayerSheet({
         } as React.CSSProperties
       }
     >
-      {/* Poignée de glissement + zone tapable pour ouvrir/fermer */}
-      <div
-        className="pt-2 pb-1 flex justify-center cursor-grab active:cursor-grabbing touch-none"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-      >
-        <div className="w-10 h-1.5 rounded-full bg-white/30" />
-      </div>
-
-      {/* Mini-lecteur — uniquement visible feuille fermée, pour ne pas faire
-          doublon avec l'en-tête plein écran juste en dessous. */}
-      {!open && (
-        <button
-          onClick={() => onOpenChange(true)}
-          className="flex items-center gap-3 px-4 pb-2 text-left"
-          style={{ height: MINI_HEIGHT - 24 }}
+      {/* Poignée + mini-lecteur regroupés dans une hauteur fixe et exacte
+          (MINI_HEIGHT) — évite tout décalage de calcul qui laisserait
+          dépasser le contenu plein écran en dessous quand la feuille est
+          fermée. */}
+      <div style={{ height: MINI_HEIGHT }} className="flex flex-col shrink-0">
+        <div
+          className="flex-1 flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
         >
-          {track.coverUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={track.coverUrl} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
-          ) : (
-            <div className="w-10 h-10 rounded bg-white/10 shrink-0" />
-          )}
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-text text-sm">{track.title}</span>
-            <span className="block truncate text-muted text-xs">{track.artist}</span>
-          </span>
-          <span
-            onClick={(e) => {
-              e.stopPropagation();
-              onTogglePlay();
-            }}
-            className="p-2 text-text"
+          <div className="w-10 h-1.5 rounded-full bg-white/30" />
+        </div>
+
+        {!open && (
+          <button
+            onClick={() => onOpenChange(true)}
+            className="flex items-center gap-3 px-4 pb-2 text-left flex-1 min-h-0"
           >
-            {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-          </span>
-        </button>
-      )}
+            {track.coverUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={track.coverUrl} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
+            ) : (
+              <div className="w-10 h-10 rounded bg-white/10 shrink-0" />
+            )}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-text text-sm">{track.title}</span>
+              <span className="block truncate text-muted text-xs">{track.artist}</span>
+            </span>
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePlay();
+              }}
+              className="p-2 text-text"
+            >
+              {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+            </span>
+          </button>
+        )}
+      </div>
 
       {/* Contenu plein écran */}
       <div className="flex-1 overflow-hidden flex flex-col px-6 pb-8 gap-6">

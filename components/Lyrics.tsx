@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { parseLrc, activeLineIndex, type LyricLine, type WordTiming } from "@/lib/lrc";
 
 function Word({
@@ -28,8 +28,8 @@ function Word({
   }
 
   return (
-    <span className="relative inline-block mr-[0.3em]">
-      <span className="text-muted">{text}</span>
+    <span className="relative inline-block mr-[0.25em]">
+      <span className="text-white/35">{text}</span>
       <span
         className="absolute inset-0 overflow-hidden text-text whitespace-nowrap"
         style={{ width: overlayWidth, transition }}
@@ -40,7 +40,7 @@ function Word({
   );
 }
 
-export default function Lyrics({
+function Lyrics({
   lyricsUrl,
   wordsUrl,
   currentTime,
@@ -86,18 +86,14 @@ export default function Lyrics({
   }, [lyricsUrl, wordsUrl]);
 
   const idx = activeLineIndex(lines, currentTime);
-  const containerRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [offset, setOffset] = useState(0);
 
+  // Défilement automatique vers la ligne active — seulement quand la ligne
+  // change (pas à chaque tick de lecture), pour laisser la place à un
+  // balayage manuel entre-temps sans que ça se batte avec l'utilisateur.
   useEffect(() => {
-    const container = containerRef.current;
-    const activeLine = lineRefs.current[idx];
-    if (!container || !activeLine) return;
-    const containerHeight = container.clientHeight;
-    const target = containerHeight / 2 - (activeLine.offsetTop + activeLine.offsetHeight / 2);
-    setOffset(target);
-  }, [idx, lines.length]);
+    lineRefs.current[idx]?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [idx]);
 
   if (!lyricsUrl) {
     return <p className="text-muted text-sm">Pas de paroles trouvées pour ce titre.</p>;
@@ -109,57 +105,50 @@ export default function Lyrics({
 
   return (
     <div
-      ref={containerRef}
-      className="h-64 overflow-hidden relative"
+      className="h-full overflow-y-auto py-24 space-y-6"
       style={{
-        maskImage: "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
-        WebkitMaskImage: "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+        maskImage: "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
       }}
     >
-      <div
-        style={{
-          transform: `translateY(${offset}px)`,
-          transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-        }}
-        className="space-y-3"
-      >
-        {lines.map((line, i) => {
-          const lineWords = words.filter((w) => w.lineIndex === i);
-          const active = i === idx;
+      {lines.map((line, i) => {
+        const lineWords = words.filter((w) => w.lineIndex === i);
+        const active = i === idx;
 
-          return (
-            <div
-              key={i}
-              ref={(el) => {
-                lineRefs.current[i] = el;
-              }}
-              onClick={() => onSeek(lineWords[0]?.time ?? line.time)}
-              className={`cursor-pointer text-lg leading-snug transition-opacity duration-500 ${
-                active ? "opacity-100" : "opacity-60 hover:opacity-90"
-              }`}
-            >
-              {lineWords.length > 0 ? (
-                lineWords.map((w, j) => {
-                  const next = lineWords[j + 1];
-                  const nextLineStart = lines[i + 1]?.time ?? w.time + 3;
-                  const duration = Math.max(0.1, (next ? next.time : nextLineStart) - w.time);
-                  return (
-                    <Word
-                      key={j}
-                      text={w.text}
-                      time={w.time}
-                      duration={duration}
-                      currentTime={currentTime}
-                    />
-                  );
-                })
-              ) : (
-                <span className={active ? "text-text" : "text-muted"}>{line.text}</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
+        return (
+          <div
+            key={i}
+            ref={(el) => {
+              lineRefs.current[i] = el;
+            }}
+            onClick={() => onSeek(lineWords[0]?.time ?? line.time)}
+            className={`cursor-pointer text-3xl font-bold leading-tight transition-opacity duration-500 ${
+              active ? "opacity-100" : "opacity-35"
+            }`}
+          >
+            {lineWords.length > 0 ? (
+              lineWords.map((w, j) => {
+                const next = lineWords[j + 1];
+                const nextLineStart = lines[i + 1]?.time ?? w.time + 3;
+                const duration = Math.max(0.1, (next ? next.time : nextLineStart) - w.time);
+                return (
+                  <Word
+                    key={j}
+                    text={w.text}
+                    time={w.time}
+                    duration={duration}
+                    currentTime={currentTime}
+                  />
+                );
+              })
+            ) : (
+              <span className="text-text">{line.text}</span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
+
+export default memo(Lyrics);

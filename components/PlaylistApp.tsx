@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Track } from "@/lib/playlist";
 import { shuffleAvoidingSameArtist } from "@/lib/shuffle";
 import TrackList from "@/components/TrackList";
@@ -98,6 +98,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     setIsPlaying(true);
     setSheetOpen(true);
   }
+  const selectTrackCb = useCallback(selectTrack, [order]);
 
   function toggleShuffle() {
     if (!shuffle) {
@@ -119,6 +120,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     if (audioRef.current) audioRef.current.currentTime = time;
     setCurrentTime(time);
   }
+  const seekCb = useCallback(seek, []);
 
   return (
     <div className="h-screen overflow-hidden relative bg-base">
@@ -142,8 +144,8 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           onPrevious={playPrevious}
           onToggleShuffle={toggleShuffle}
           onToggleRepeat={() => setRepeat(!repeat)}
-          onSeek={seek}
-          onSelectFromQueue={selectTrack}
+          onSeek={seekCb}
+          onSelectFromQueue={selectTrackCb}
           audioRef={audioRef}
         />
       )}

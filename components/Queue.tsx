@@ -1,8 +1,9 @@
 "use client";
 
 import type { Track } from "@/lib/playlist";
+import { memo } from "react";
 
-export default function Queue({
+function Queue({
   tracks,
   onSelect,
 }: {
@@ -37,3 +38,5 @@ export default function Queue({
     </div>
   );
 }
+
+export default memo(Queue);
