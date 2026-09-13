@@ -12,6 +12,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const [hasSelected, setHasSelected] = useState(false); // rien ne joue tant qu'on n'a pas choisi un titre
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -131,6 +132,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           queue={order.slice(position + 1)}
           isPlaying={isPlaying}
           currentTime={currentTime}
+          duration={duration}
           shuffle={shuffle}
           repeat={repeat}
           open={sheetOpen}
@@ -151,6 +153,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           ref={audioRef}
           src={current.audioUrl}
           onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
           onEnded={playNext}
         />
       )}

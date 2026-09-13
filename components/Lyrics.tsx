@@ -108,7 +108,14 @@ export default function Lyrics({
   }
 
   return (
-    <div ref={containerRef} className="h-64 overflow-hidden relative">
+    <div
+      ref={containerRef}
+      className="h-64 overflow-hidden relative"
+      style={{
+        maskImage: "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
+      }}
+    >
       <div
         style={{
           transform: `translateY(${offset}px)`,
