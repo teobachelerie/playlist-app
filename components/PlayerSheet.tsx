@@ -8,11 +8,9 @@ import {
   ChevronsRight,
   Shuffle,
   Repeat,
-  Cast,
+  Airplay,
   Captions,
   ListMusic,
-  Volume1,
-  Volume2,
 } from "lucide-react";
 import type { Track } from "@/lib/playlist";
 import Lyrics from "@/components/Lyrics";
@@ -131,32 +129,35 @@ export default function PlayerSheet({
         <div className="w-10 h-1.5 rounded-full bg-white/30" />
       </div>
 
-      {/* Mini-lecteur (visible surtout quand fermé, mais toujours en haut de la feuille) */}
-      <button
-        onClick={() => onOpenChange(true)}
-        className="flex items-center gap-3 px-4 pb-2 text-left"
-        style={{ height: MINI_HEIGHT - 24 }}
-      >
-        {track.coverUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={track.coverUrl} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
-        ) : (
-          <div className="w-10 h-10 rounded bg-white/10 shrink-0" />
-        )}
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-text text-sm">{track.title}</span>
-          <span className="block truncate text-muted text-xs">{track.artist}</span>
-        </span>
-        <span
-          onClick={(e) => {
-            e.stopPropagation();
-            onTogglePlay();
-          }}
-          className="p-2 text-text"
+      {/* Mini-lecteur — uniquement visible feuille fermée, pour ne pas faire
+          doublon avec l'en-tête plein écran juste en dessous. */}
+      {!open && (
+        <button
+          onClick={() => onOpenChange(true)}
+          className="flex items-center gap-3 px-4 pb-2 text-left"
+          style={{ height: MINI_HEIGHT - 24 }}
         >
-          {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-        </span>
-      </button>
+          {track.coverUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={track.coverUrl} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
+          ) : (
+            <div className="w-10 h-10 rounded bg-white/10 shrink-0" />
+          )}
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-text text-sm">{track.title}</span>
+            <span className="block truncate text-muted text-xs">{track.artist}</span>
+          </span>
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              onTogglePlay();
+            }}
+            className="p-2 text-text"
+          >
+            {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+          </span>
+        </button>
+      )}
 
       {/* Contenu plein écran */}
       <div className="flex-1 overflow-hidden flex flex-col px-6 pb-8 gap-6">
@@ -203,7 +204,7 @@ export default function PlayerSheet({
           </button>
           {airplaySupported && (
             <button onClick={handleAirplay} className="hover:text-text" aria-label="Sortie audio">
-              <Cast size={20} />
+              <Airplay size={20} />
             </button>
           )}
           <button
@@ -248,23 +249,6 @@ export default function PlayerSheet({
           >
             <Repeat size={20} />
           </button>
-        </div>
-
-        {/* Volume */}
-        <div className="flex items-center gap-3 text-muted">
-          <Volume1 size={16} />
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            defaultValue={1}
-            onChange={(e) => {
-              if (audioRef.current) audioRef.current.volume = parseFloat(e.target.value);
-            }}
-            className="flex-1 accent-white"
-          />
-          <Volume2 size={16} />
         </div>
       </div>
     </div>

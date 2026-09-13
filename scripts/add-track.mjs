@@ -10,7 +10,7 @@
 
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { readFile, writeFile, mkdtemp, rm, readdir, copyFile } from "node:fs/promises";
+import { readFile, writeFile, mkdtemp, rm, readdir, copyFile, rename } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -59,9 +59,26 @@ async function extractAudioAndThumbnail(tmpDir, url) {
 
   const files = await readdir(tmpDir);
   const thumbFile = files.find((f) => f.startsWith("track.") && f.endsWith(".jpg"));
+  const rawMp3Path = path.join(tmpDir, "track.mp3");
+  const normalizedPath = path.join(tmpDir, "track_norm.mp3");
+
+  console.log("→ Normalisation du volume (loudnorm, -14 LUFS — niveau standard streaming)…");
+  await execFileAsync("ffmpeg", [
+    "-y",
+    "-i",
+    rawMp3Path,
+    "-af",
+    "loudnorm=I=-14:TP=-1.5:LRA=11",
+    "-c:a",
+    "libmp3lame",
+    "-b:a",
+    "192k",
+    normalizedPath,
+  ]);
+  await rename(normalizedPath, rawMp3Path);
 
   return {
-    mp3Path: path.join(tmpDir, "track.mp3"),
+    mp3Path: rawMp3Path,
     thumbnailPath: thumbFile ? path.join(tmpDir, thumbFile) : null,
   };
 }

@@ -44,12 +44,13 @@ Recherche insensible à la casse sur le titre et l'artiste. Si plusieurs titres 
 
 Le script :
 1. extrait l'audio en mp3 (~128kbps) et la miniature YouTube avec yt-dlp,
-2. cherche les paroles synchronisées sur lrclib.net,
-3. si rien n'est trouvé, essaie les sous-titres YouTube de la vidéo (qualité variable selon la vidéo — voir le commentaire dans `scripts/lib/vttToLrc.mjs`),
-4. si des paroles ont été trouvées, aligne les mots avec Whisper pour l'animation mot par mot (voir `scripts/lib/alignWords.mjs` pour le détail de la méthode et ses limites),
-5. cherche la pochette d'album sur iTunes (repli sur la miniature YouTube si rien trouvé),
-6. extrait les couleurs dominantes de la pochette (assombries) pour le fond dynamique de l'app,
-7. ajoute le titre dans `data/manifest.json`.
+2. normalise le volume à -14 LUFS (niveau standard streaming) pour une intensité sonore cohérente entre les titres,
+3. cherche les paroles synchronisées sur lrclib.net,
+4. si rien n'est trouvé, essaie les sous-titres YouTube de la vidéo (qualité variable selon la vidéo — voir le commentaire dans `scripts/lib/vttToLrc.mjs`),
+5. si des paroles ont été trouvées, aligne les mots avec Whisper pour l'animation mot par mot (voir `scripts/lib/alignWords.mjs` pour le détail de la méthode et ses limites),
+6. cherche la pochette d'album sur iTunes (repli sur la miniature YouTube si rien trouvé),
+7. extrait les couleurs dominantes de la pochette (assombries) pour le fond dynamique de l'app,
+8. ajoute le titre dans `data/manifest.json`.
 
 Recommencer la commande pour chacun de tes 108 titres actuels, puis 1-2 fois par mois pour les nouveaux.
 

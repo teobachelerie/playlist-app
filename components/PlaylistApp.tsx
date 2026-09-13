@@ -23,6 +23,39 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     if (isPlaying) audioRef.current?.play();
   }, [position, isPlaying]);
 
+  // Media Session : ce qui alimente l'écran verrouillé et le centre de
+  // contrôle (cover, titre, boutons suivant/précédent réels au lieu des
+  // sauts de 10s par défaut du navigateur).
+  useEffect(() => {
+    if (!current || !("mediaSession" in navigator)) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: current.title,
+      artist: current.artist,
+      artwork: current.coverUrl
+        ? [{ src: current.coverUrl, sizes: "512x512", type: "image/jpeg" }]
+        : [],
+    });
+    navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
+    navigator.mediaSession.setActionHandler("nexttrack", playNext);
+    navigator.mediaSession.setActionHandler("play", () => {
+      audioRef.current?.play();
+      setIsPlaying(true);
+    });
+    navigator.mediaSession.setActionHandler("pause", () => {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+    });
+    // Neutralise les boutons de saut ±10s pour ne laisser que précédent/suivant.
+    navigator.mediaSession.setActionHandler("seekforward", null);
+    navigator.mediaSession.setActionHandler("seekbackward", null);
+  }, [current, position, order, repeat, shuffle]);
+
+  useEffect(() => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    }
+  }, [isPlaying]);
+
   function togglePlay() {
     if (!audioRef.current) return;
     if (isPlaying) {
