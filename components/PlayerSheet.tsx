@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { Fragment, useEffect, useRef, useState, type RefObject } from "react";
 import {
   Play,
   Pause,
@@ -113,139 +113,159 @@ export default function PlayerSheet({
   }
 
   return (
-    <div
-      className="dynamic-bg fixed inset-x-0 bottom-0 h-screen rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
-      style={
-        {
-          transform,
-          transition: dragY === null ? "transform 0.35s cubic-bezier(0.32,0.72,0,1)" : "none",
-          "--color-primary": track.colorPrimary,
-          "--color-secondary": track.colorSecondary,
-        } as React.CSSProperties
-      }
-    >
-      {/* Poignée de glissement, pour fermer */}
+    <Fragment>
+      {/* Bloque les interactions avec la playlist en arrière-plan tant que
+          la feuille n'est pas entièrement fermée (ouverte ou en cours de
+          glissement) — sans ça, la zone révélée pendant le geste laisse
+          passer les touchers vers la liste derrière. */}
       <div
-        className="pt-2 pb-1 flex justify-center cursor-grab active:cursor-grabbing touch-none shrink-0"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
+        className="fixed inset-0 z-30"
+        style={{ pointerEvents: open || dragY !== null ? "auto" : "none" }}
+      />
+
+      <div
+        className="dynamic-bg fixed inset-x-0 bottom-0 h-screen rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40"
+        style={
+          {
+            transform,
+            transition: dragY === null ? "transform 0.35s cubic-bezier(0.32,0.72,0,1)" : "none",
+            "--color-primary": track.colorPrimary,
+            "--color-secondary": track.colorSecondary,
+          } as React.CSSProperties
+        }
       >
-        <div className="w-10 h-1.5 rounded-full bg-white/30" />
-      </div>
-
-      {/* Contenu plein écran */}
-      <div className="flex-1 overflow-hidden flex flex-col px-6 pb-8 gap-6">
-        <div className="flex items-center gap-4">
-          {track.coverUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={track.coverUrl} alt="" className="w-16 h-16 rounded-md object-cover shrink-0 shadow-lg" />
-          ) : (
-            <div className="w-16 h-16 rounded-md bg-white/10 shrink-0" />
-          )}
-          <div className="min-w-0">
-            <h1 className="text-xl text-text truncate">{track.title}</h1>
-            <p className="text-muted truncate">{track.artist}</p>
+        {/* Zone de fermeture par glissement — toute la partie haute (poignée
+            + pochette/titre), pas seulement la petite poignée : bien plus
+            facile à attraper, comme les autres apps de musique. */}
+        <div
+          className="pt-2 pb-4 px-6 flex flex-col gap-4 cursor-grab active:cursor-grabbing touch-none shrink-0"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+        >
+          <div className="flex justify-center">
+            <div className="w-10 h-1.5 rounded-full bg-white/30" />
           </div>
-        </div>
-
-        <div className="flex-1 overflow-hidden">
-          {panel === "lyrics" && (
-            <Lyrics
-              lyricsUrl={track.lyricsUrl}
-              wordsUrl={track.wordsUrl}
-              currentTime={currentTime}
-              onSeek={onSeek}
-            />
-          )}
-          {panel === "cover" &&
-            (track.coverUrl ? (
+          <div className="flex items-center gap-4">
+            {track.coverUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={track.coverUrl} alt="" className="w-full aspect-square object-cover rounded-lg" />
+              <img
+                src={track.coverUrl}
+                alt=""
+                draggable={false}
+                className="w-16 h-16 rounded-md object-cover shrink-0 shadow-lg select-none"
+              />
             ) : (
-              <div className="w-full aspect-square rounded-lg bg-white/10" />
-            ))}
-          {panel === "queue" && <Queue tracks={queue} onSelect={onSelectFromQueue} />}
-        </div>
-
-        {/* Barre de progression — avance affichée et seek au clic/glisser */}
-        <div className="space-y-1">
-          <input
-            type="range"
-            min={0}
-            max={duration || 0}
-            value={Math.min(currentTime, duration || 0)}
-            step={0.1}
-            onChange={(e) => onSeek(parseFloat(e.target.value))}
-            className="w-full accent-white h-1"
-            aria-label="Progression du titre"
-          />
-          <div className="flex justify-between text-xs text-muted">
-            <span>{formatTime(currentTime)}</span>
-            <span>-{formatTime(Math.max(duration - currentTime, 0))}</span>
-          </div>
-        </div>
-
-        {/* Transport */}
-        <div className="flex items-center justify-center gap-8">
-          <button
-            onClick={onToggleShuffle}
-            className={shuffle ? "text-accent" : "text-muted hover:text-text"}
-            aria-label="Lecture aléatoire"
-          >
-            <Shuffle size={20} />
-          </button>
-          <button
-            onClick={onPrevious}
-            className="text-text hover:opacity-70"
-            aria-label="Titre précédent"
-          >
-            <ChevronsLeft size={32} fill="currentColor" />
-          </button>
-          <button
-            onClick={onTogglePlay}
-            className="w-14 h-14 rounded-full bg-white text-base flex items-center justify-center"
-            aria-label={isPlaying ? "Pause" : "Lecture"}
-          >
-            {isPlaying ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" />}
-          </button>
-          <button onClick={onNext} className="text-text hover:opacity-70" aria-label="Titre suivant">
-            <ChevronsRight size={32} fill="currentColor" />
-          </button>
-          <button
-            onClick={onToggleRepeat}
-            className={repeat ? "text-accent" : "text-muted hover:text-text"}
-            aria-label="Répéter"
-          >
-            <Repeat size={20} />
-          </button>
-        </div>
-
-        {/* Ligne d'icônes secondaires — trois colonnes égales, comme Apple Music */}
-        <div className="grid grid-cols-3 items-center text-muted px-2">
-          <button
-            onClick={() => setPanel(panel === "lyrics" ? "cover" : "lyrics")}
-            className={`justify-self-start ${panel === "lyrics" ? "text-accent" : "hover:text-text"}`}
-            aria-label="Afficher/masquer les paroles"
-          >
-            <Captions size={26} />
-          </button>
-          <div className="justify-self-center">
-            {airplaySupported && (
-              <button onClick={handleAirplay} className="hover:text-text" aria-label="Sortie audio">
-                <Airplay size={26} />
-              </button>
+              <div className="w-16 h-16 rounded-md bg-white/10 shrink-0" />
             )}
+            <div className="min-w-0">
+              <h1 className="text-xl text-text truncate">{track.title}</h1>
+              <p className="text-muted truncate">{track.artist}</p>
+            </div>
           </div>
-          <button
-            onClick={() => setPanel(panel === "queue" ? "lyrics" : "queue")}
-            className={`justify-self-end ${panel === "queue" ? "text-accent" : "hover:text-text"}`}
-            aria-label="File d'attente"
-          >
-            <ListMusic size={26} />
-          </button>
+        </div>
+
+        {/* Reste du contenu — pas de glissement ici, pour ne pas gêner le
+            défilement tactile des paroles. */}
+        <div className="flex-1 overflow-hidden flex flex-col px-6 pb-8 gap-6">
+          <div className="flex-1 overflow-hidden">
+            {panel === "lyrics" && (
+              <Lyrics
+                lyricsUrl={track.lyricsUrl}
+                wordsUrl={track.wordsUrl}
+                currentTime={currentTime}
+                onSeek={onSeek}
+              />
+            )}
+            {panel === "cover" &&
+              (track.coverUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={track.coverUrl} alt="" className="w-full aspect-square object-cover rounded-lg" />
+              ) : (
+                <div className="w-full aspect-square rounded-lg bg-white/10" />
+              ))}
+            {panel === "queue" && <Queue tracks={queue} onSelect={onSelectFromQueue} />}
+          </div>
+
+          {/* Barre de progression — avance affichée et seek au clic/glisser */}
+          <div className="space-y-1">
+            <input
+              type="range"
+              min={0}
+              max={duration || 0}
+              value={Math.min(currentTime, duration || 0)}
+              step={0.1}
+              onChange={(e) => onSeek(parseFloat(e.target.value))}
+              className="w-full accent-white h-1"
+              aria-label="Progression du titre"
+            />
+            <div className="flex justify-between text-xs text-muted">
+              <span>{formatTime(currentTime)}</span>
+              <span>-{formatTime(Math.max(duration - currentTime, 0))}</span>
+            </div>
+          </div>
+
+          {/* Transport */}
+          <div className="flex items-center justify-center gap-8">
+            <button
+              onClick={onToggleShuffle}
+              className={shuffle ? "text-accent" : "text-muted hover:text-text"}
+              aria-label="Lecture aléatoire"
+            >
+              <Shuffle size={20} />
+            </button>
+            <button
+              onClick={onPrevious}
+              className="text-text hover:opacity-70"
+              aria-label="Titre précédent"
+            >
+              <ChevronsLeft size={32} fill="currentColor" />
+            </button>
+            <button
+              onClick={onTogglePlay}
+              className="w-14 h-14 rounded-full bg-white text-base flex items-center justify-center"
+              aria-label={isPlaying ? "Pause" : "Lecture"}
+            >
+              {isPlaying ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" />}
+            </button>
+            <button onClick={onNext} className="text-text hover:opacity-70" aria-label="Titre suivant">
+              <ChevronsRight size={32} fill="currentColor" />
+            </button>
+            <button
+              onClick={onToggleRepeat}
+              className={repeat ? "text-accent" : "text-muted hover:text-text"}
+              aria-label="Répéter"
+            >
+              <Repeat size={20} />
+            </button>
+          </div>
+
+          {/* Ligne d'icônes secondaires — trois colonnes égales, comme Apple Music */}
+          <div className="grid grid-cols-3 items-center text-muted px-2">
+            <button
+              onClick={() => setPanel(panel === "lyrics" ? "cover" : "lyrics")}
+              className={`justify-self-start ${panel === "lyrics" ? "text-accent" : "hover:text-text"}`}
+              aria-label="Afficher/masquer les paroles"
+            >
+              <Captions size={26} />
+            </button>
+            <div className="justify-self-center">
+              {airplaySupported && (
+                <button onClick={handleAirplay} className="hover:text-text" aria-label="Sortie audio">
+                  <Airplay size={26} />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setPanel(panel === "queue" ? "lyrics" : "queue")}
+              className={`justify-self-end ${panel === "queue" ? "text-accent" : "hover:text-text"}`}
+              aria-label="File d'attente"
+            >
+              <ListMusic size={26} />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Fragment>
   );
 }
