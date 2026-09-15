@@ -3,6 +3,12 @@
 import { memo, useEffect, useRef, useState } from "react";
 import { parseLrc, activeLineIndex, type LyricLine, type WordTiming } from "@/lib/lrc";
 
+// Whisper (et le pipeline d'alignement) a tendance à détecter les mots avec
+// un léger retard systématique par rapport au son réel — cette compensation
+// avance artificiellement le temps utilisé pour le surlignage. À ajuster
+// si le décalage ressenti persiste (en secondes).
+const LEAD_OFFSET = 0.18;
+
 function Word({
   text,
   time,
@@ -29,9 +35,9 @@ function Word({
 
   return (
     <span className="relative inline-block mr-[0.25em]">
-      <span className="text-white/35">{text}</span>
+      <span className="text-tertiary">{text}</span>
       <span
-        className="absolute inset-0 overflow-hidden text-white whitespace-nowrap"
+        className="absolute inset-0 overflow-hidden text-text whitespace-nowrap"
         style={{ width: overlayWidth, transition }}
       >
         {text}
@@ -85,7 +91,7 @@ function Lyrics({
     };
   }, [lyricsUrl, wordsUrl]);
 
-  const idx = activeLineIndex(lines, currentTime);
+  const idx = activeLineIndex(lines, currentTime + LEAD_OFFSET);
   const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Défilement automatique vers la ligne active — seulement quand la ligne
@@ -96,11 +102,11 @@ function Lyrics({
   }, [idx]);
 
   if (!lyricsUrl) {
-    return <p className="text-white/60 text-sm">Pas de paroles trouvées pour ce titre.</p>;
+    return <p className="text-muted text-sm">Pas de paroles trouvées pour ce titre.</p>;
   }
 
   if (lines.length === 0) {
-    return <p className="text-white/60 text-sm">Chargement des paroles…</p>;
+    return <p className="text-muted text-sm">Chargement des paroles…</p>;
   }
 
   return (
@@ -137,12 +143,12 @@ function Lyrics({
                     text={w.text}
                     time={w.time}
                     duration={duration}
-                    currentTime={currentTime}
+                    currentTime={currentTime + LEAD_OFFSET}
                   />
                 );
               })
             ) : (
-              <span className="text-white">{line.text}</span>
+              <span className="text-text">{line.text}</span>
             )}
           </div>
         );

@@ -270,6 +270,7 @@ async function main() {
       : {
           primary: "#1d1b18",
           secondary: "#0a0a0a",
+          soft: "rgba(255,255,255,0)",
           colorLight: "rgba(255,255,255,0.08)",
           colorDark: "rgba(0,0,0,0.45)",
         };
@@ -303,6 +304,7 @@ async function main() {
       coverUrl,
       colorPrimary: colors.primary,
       colorSecondary: colors.secondary,
+      colorSoft: colors.soft,
       colorLight: colors.colorLight,
       colorDark: colors.colorDark,
       addedAt: new Date().toISOString(),

@@ -25,6 +25,20 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     if (isPlaying) audioRef.current?.play();
   }, [position, isPlaying]);
 
+  // Suivi fin du temps de lecture via requestAnimationFrame plutôt que
+  // l'événement natif "timeupdate" (qui ne se déclenche que ~4 fois/seconde
+  // et introduit un retard perceptible sur le surlignage mot par mot).
+  useEffect(() => {
+    if (!isPlaying) return;
+    let frame: number;
+    const tick = () => {
+      if (audioRef.current) setCurrentTime(audioRef.current.currentTime);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [isPlaying]);
+
   // Media Session : ce qui alimente l'écran verrouillé et le centre de
   // contrôle (cover, titre, boutons suivant/précédent réels au lieu des
   // sauts de 10s par défaut du navigateur).
@@ -124,7 +138,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const seekCb = useCallback(seek, []);
 
   return (
-    <div className="h-screen overflow-hidden relative bg-base">
+    <div className="h-dvh overflow-hidden relative bg-base">
       <div className="h-full overflow-y-auto">
         <TrackList tracks={tracks} currentId={current?.id ?? null} onSelect={selectTrack} />
       </div>
@@ -164,7 +178,6 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
         <audio
           ref={audioRef}
           src={current.audioUrl}
-          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
           onEnded={playNext}
         />

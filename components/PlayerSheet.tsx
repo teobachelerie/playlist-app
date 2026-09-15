@@ -124,13 +124,12 @@ export default function PlayerSheet({
       />
 
       <div
-        className="dynamic-bg fixed inset-x-0 bottom-0 h-screen rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40"
+        className="dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40"
         style={
           {
             transform,
             transition: dragY === null ? "transform 0.35s cubic-bezier(0.32,0.72,0,1)" : "none",
-            "--color-primary": track.colorPrimary,
-            "--color-secondary": track.colorSecondary,
+            "--color-soft": track.colorSoft,
             "--color-light": track.colorLight,
             "--color-dark": track.colorDark,
           } as React.CSSProperties
@@ -146,7 +145,7 @@ export default function PlayerSheet({
           onPointerUp={handlePointerUp}
         >
           <div className="flex justify-center">
-            <div className="w-10 h-1.5 rounded-full bg-white/30" />
+            <div className="w-10 h-1.5 rounded-full bg-hairline" />
           </div>
           <div className="flex items-center gap-4">
             {track.coverUrl ? (
@@ -158,11 +157,11 @@ export default function PlayerSheet({
                 className="w-16 h-16 rounded-md object-cover shrink-0 shadow-lg select-none"
               />
             ) : (
-              <div className="w-16 h-16 rounded-md bg-white/10 shrink-0" />
+              <div className="w-16 h-16 rounded-md bg-inset shrink-0" />
             )}
             <div className="min-w-0">
-              <h1 className="text-xl text-white truncate">{track.title}</h1>
-              <p className="text-white/60 truncate">{track.artist}</p>
+              <h1 className="text-xl text-text truncate">{track.title}</h1>
+              <p className="text-muted truncate">{track.artist}</p>
             </div>
           </div>
         </div>
@@ -184,7 +183,7 @@ export default function PlayerSheet({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={track.coverUrl} alt="" className="w-full aspect-square object-cover rounded-lg" />
               ) : (
-                <div className="w-full aspect-square rounded-lg bg-white/10" />
+                <div className="w-full aspect-square rounded-lg bg-inset" />
               ))}
             {panel === "queue" && <Queue tracks={queue} onSelect={onSelectFromQueue} />}
           </div>
@@ -192,7 +191,7 @@ export default function PlayerSheet({
           {/* Barre de progression — piste "enfoncée" façon néomorphisme,
               avance affichée et seek au clic/glisser */}
           <div className="space-y-1">
-            <div className="elev-oncolor-inset rounded-full px-3 py-2 bg-black/10">
+            <div className="rounded-full px-3 py-2 bg-inset shadow-inset-sm">
               <input
                 type="range"
                 min={0}
@@ -200,11 +199,11 @@ export default function PlayerSheet({
                 value={Math.min(currentTime, duration || 0)}
                 step={0.1}
                 onChange={(e) => onSeek(parseFloat(e.target.value))}
-                className="w-full accent-white h-1 block"
+                className="w-full accent-accent h-1 block"
                 aria-label="Progression du titre"
               />
             </div>
-            <div className="flex justify-between text-xs text-white/60">
+            <div className="flex justify-between text-xs text-muted">
               <span>{formatTime(currentTime)}</span>
               <span>-{formatTime(Math.max(duration - currentTime, 0))}</span>
             </div>
@@ -214,35 +213,31 @@ export default function PlayerSheet({
           <div className="flex items-center justify-center gap-8">
             <button
               onClick={onToggleShuffle}
-              className={shuffle ? "text-white" : "text-white/50 hover:text-white/80"}
+              className={shuffle ? "text-text" : "text-tertiary hover:text-muted"}
               aria-label="Lecture aléatoire"
             >
               <Shuffle size={20} />
             </button>
             <button
               onClick={onPrevious}
-              className="text-white hover:opacity-70"
+              className="text-text hover:opacity-70"
               aria-label="Titre précédent"
             >
               <ChevronsLeft size={32} fill="currentColor" />
             </button>
             <button
               onClick={onTogglePlay}
-              className="elev-oncolor-raised press-tactile w-14 h-14 rounded-full bg-white flex items-center justify-center"
+              className="press-tactile shadow-raised w-14 h-14 rounded-full bg-highlight flex items-center justify-center text-text"
               aria-label={isPlaying ? "Pause" : "Lecture"}
             >
-              {isPlaying ? (
-                <Pause size={26} fill="currentColor" className="text-black" />
-              ) : (
-                <Play size={26} fill="currentColor" className="text-black" />
-              )}
+              {isPlaying ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" />}
             </button>
-            <button onClick={onNext} className="text-white hover:opacity-70" aria-label="Titre suivant">
+            <button onClick={onNext} className="text-text hover:opacity-70" aria-label="Titre suivant">
               <ChevronsRight size={32} fill="currentColor" />
             </button>
             <button
               onClick={onToggleRepeat}
-              className={repeat ? "text-white" : "text-white/50 hover:text-white/80"}
+              className={repeat ? "text-text" : "text-tertiary hover:text-muted"}
               aria-label="Répéter"
             >
               <Repeat size={20} />
@@ -250,24 +245,24 @@ export default function PlayerSheet({
           </div>
 
           {/* Ligne d'icônes secondaires — trois colonnes égales, comme Apple Music */}
-          <div className="grid grid-cols-3 items-center text-white/60 px-2">
+          <div className="grid grid-cols-3 items-center text-tertiary px-2">
             <button
               onClick={() => setPanel(panel === "lyrics" ? "cover" : "lyrics")}
-              className={`justify-self-start ${panel === "lyrics" ? "text-white" : "hover:text-white/80"}`}
+              className={`justify-self-start ${panel === "lyrics" ? "text-text" : "hover:text-muted"}`}
               aria-label="Afficher/masquer les paroles"
             >
               <Captions size={26} />
             </button>
             <div className="justify-self-center">
               {airplaySupported && (
-                <button onClick={handleAirplay} className="hover:text-white/80" aria-label="Sortie audio">
+                <button onClick={handleAirplay} className="hover:text-muted" aria-label="Sortie audio">
                   <Airplay size={26} />
                 </button>
               )}
             </div>
             <button
               onClick={() => setPanel(panel === "queue" ? "lyrics" : "queue")}
-              className={`justify-self-end ${panel === "queue" ? "text-white" : "hover:text-white/80"}`}
+              className={`justify-self-end ${panel === "queue" ? "text-text" : "hover:text-muted"}`}
               aria-label="File d'attente"
             >
               <ListMusic size={26} />

@@ -74,6 +74,9 @@ export async function extractColors(imageBuffer) {
   return {
     primary: toHex(darken(vibrant, 0.55)),
     secondary: toHex(darken(average, 0.45)),
+    // Teinte légère posée sur le fond neutre (pas un fond saturé) — alpha
+    // basse volontairement, l'idée est un lavis de couleur, pas un aplat.
+    soft: toRgba(vibrant, 0.16),
     // Source claire/foncée pour l'effet néomorphique "sur couleur" du
     // lecteur plein écran — dérivées de la même teinte vibrante que le fond.
     colorLight: toRgba(lighten(vibrant, 0.5), 0.18),
