@@ -16,12 +16,19 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#141311",
+  themeColor: "#F2F2F7",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("expenses-theme");if(t==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="bg-base text-text font-sans">{children}</body>
     </html>
   );

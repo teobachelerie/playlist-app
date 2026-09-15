@@ -7,6 +7,18 @@ function darken([r, g, b], factor = 0.5) {
   return [Math.round(r * factor), Math.round(g * factor), Math.round(b * factor)];
 }
 
+function lighten([r, g, b], factor = 0.4) {
+  return [
+    Math.round(r + (255 - r) * factor),
+    Math.round(g + (255 - g) * factor),
+    Math.round(b + (255 - b) * factor),
+  ];
+}
+
+function toRgba([r, g, b], alpha) {
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function toHex([r, g, b]) {
   return "#" + [r, g, b].map((c) => c.toString(16).padStart(2, "0")).join("");
 }
@@ -62,5 +74,9 @@ export async function extractColors(imageBuffer) {
   return {
     primary: toHex(darken(vibrant, 0.55)),
     secondary: toHex(darken(average, 0.45)),
+    // Source claire/foncée pour l'effet néomorphique "sur couleur" du
+    // lecteur plein écran — dérivées de la même teinte vibrante que le fond.
+    colorLight: toRgba(lighten(vibrant, 0.5), 0.18),
+    colorDark: toRgba(darken(vibrant, 0.3), 0.45),
   };
 }

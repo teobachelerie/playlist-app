@@ -11,12 +11,12 @@ function Queue({
   onSelect: (id: string) => void;
 }) {
   if (tracks.length === 0) {
-    return <p className="text-muted text-sm">Fin de la playlist.</p>;
+    return <p className="text-white/60 text-sm">Fin de la playlist.</p>;
   }
 
   return (
     <div className="h-full overflow-y-auto space-y-1">
-      <p className="text-muted text-xs uppercase tracking-wide mb-2">À suivre</p>
+      <p className="text-white/60 text-xs uppercase tracking-wide mb-2">À suivre</p>
       {tracks.map((track) => (
         <button
           key={track.id}
@@ -30,8 +30,8 @@ function Queue({
             <div className="w-9 h-9 rounded bg-white/10 shrink-0" />
           )}
           <span className="min-w-0">
-            <span className="block truncate text-text text-sm">{track.title}</span>
-            <span className="block truncate text-muted text-xs">{track.artist}</span>
+            <span className="block truncate text-white text-sm">{track.title}</span>
+            <span className="block truncate text-white/60 text-xs">{track.artist}</span>
           </span>
         </button>
       ))}

@@ -1,14 +1,159 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  height: 100%;
+:root {
+  /* Neutres bruts */
+  --white: #ffffff;
+  --off-white: #f2f2f7;
+  --grey-1: #e8e8ed;
+  --grey-2: #d8d8de;
+  --grey-3: #c7c7cc;
+  --grey-4: #8e8e93;
+  --grey-5: #48484a;
+  --black: #000000;
+
+  /* Surfaces */
+  --surface-base: #f2f2f7;
+  --surface-raised: #f2f2f7;
+  --surface-highlight: #ffffff;
+  --surface-inset: #f2f2f7;
+  --surface-scrim: rgba(0, 0, 0, 0.18);
+  --surface-danger: #ffebea;
+
+  /* Texte / icônes */
+  --text-primary: #000000;
+  --text-secondary: #48484a;
+  --text-tertiary: #8e8e93;
+  --text-inverse: #ffffff;
+  --text-expense: #ff3b30;
+  --text-income: #34c759;
+  --icon-primary: #000000;
+  --icon-secondary: #8e8e93;
+  --separator: rgba(0, 0, 0, 0.06);
+  --hairline: rgba(0, 0, 0, 0.1);
+
+  /* Accent */
+  --accent-bg: #000000;
+  --accent-text: #ffffff;
+  --red: #ff3b30;
+  --green: #34c759;
+
+  /* Sources lumineuses néomorphiques */
+  --light-source: rgba(255, 255, 255, 0.9);
+  --light-source-strong: rgba(255, 255, 255, 1);
+  --dark-source: rgba(0, 0, 0, 0.1);
+  --dark-source-strong: rgba(0, 0, 0, 0.16);
+
+  /* Typo */
+  --font-core: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+  --font-numeric: var(--font-display);
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --leading-tight: 1.06;
+  --leading-snug: 1.22;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --tracking-balance: -0.03em;
+  --tracking-display: -0.026em;
+  --tracking-title: -0.02em;
+  --tracking-body: -0.01em;
+  --tracking-caption: 0em;
+
+  /* Espacements / cibles tactiles */
+  --gutter-screen: 20px;
+  --gap-list: 12px;
+  --gap-section: 32px;
+  --hit-min: 44px;
+
+  /* Élévations néomorphiques */
+  --elev-flat: none;
+  --elev-raised-sm: 3px 3px 8px var(--dark-source), -3px -3px 8px var(--light-source);
+  --elev-raised: 6px 6px 14px var(--dark-source), -5px -5px 12px var(--light-source);
+  --elev-raised-lg: 10px 10px 22px var(--dark-source-strong), -8px -8px 18px var(--light-source-strong);
+  --elev-inset-sm: inset 2px 2px 5px var(--dark-source), inset -2px -2px 5px var(--light-source);
+  --elev-inset: inset 4px 4px 10px var(--dark-source), inset -3px -3px 8px var(--light-source);
+  --elev-press: inset 3px 3px 7px var(--dark-source), inset -2px -2px 6px var(--light-source);
+  --elev-overlay: 0 -2px 24px rgba(0, 0, 0, 0.1), 0 -12px 48px rgba(0, 0, 0, 0.06);
+
+  /* Animations */
+  --duration-micro: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+  --ease-standard: cubic-bezier(0.33, 0, 0.15, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --press-scale: 0.985;
 }
 
-/* Enregistre les variables de couleur comme des <color> animables, pour que
-   le fond dérivé de la pochette se fonde en douceur d'un titre à l'autre
-   au lieu de changer d'un coup. */
+[data-theme="dark"] {
+  --surface-base: #1c1c1e;
+  --surface-raised: #1c1c1e;
+  --surface-highlight: #2c2c2e;
+  --surface-inset: #1c1c1e;
+  --surface-scrim: rgba(0, 0, 0, 0.55);
+  --surface-danger: rgba(255, 69, 58, 0.15);
+
+  --text-primary: #ffffff;
+  --text-secondary: #c7c7cc;
+  --text-tertiary: #8e8e93;
+  --text-inverse: #0a0a0a;
+  --text-expense: #ff453a;
+  --text-income: #32d74b;
+  --icon-primary: #ffffff;
+  --icon-secondary: #8e8e93;
+  --separator: rgba(255, 255, 255, 0.08);
+  --hairline: rgba(255, 255, 255, 0.12);
+
+  --accent-bg: #ffffff;
+  --accent-text: #0a0a0a;
+  --red: #ff453a;
+  --green: #32d74b;
+
+  --light-source: rgba(255, 255, 255, 0.045);
+  --light-source-strong: rgba(255, 255, 255, 0.07);
+  --dark-source: rgba(0, 0, 0, 0.55);
+  --dark-source-strong: rgba(0, 0, 0, 0.7);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font: var(--weight-regular) 17px/var(--leading-relaxed) var(--font-core);
+  letter-spacing: var(--tracking-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard);
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fond dynamique dérivé de la pochette (lecteur plein écran uniquement) —
+   indépendant du design system neutre ci-dessus. */
 @property --color-primary {
   syntax: "<color>";
   inherits: true;
@@ -32,10 +177,25 @@ html, body {
     --color-secondary 0.8s ease;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
+/* Élévations néomorphiques "sur couleur" — utilisent la teinte du titre en
+   cours plutôt que les sources lumineuses neutres, pour que les contrôles du
+   lecteur restent en relief sur le fond coloré. */
+.elev-oncolor-raised {
+  box-shadow:
+    4px 4px 10px var(--color-dark, rgba(0, 0, 0, 0.35)),
+    -3px -3px 8px var(--color-light, rgba(255, 255, 255, 0.08));
 }
-::-webkit-scrollbar-thumb {
-  background-color: theme("colors.line");
-  border-radius: 4px;
+.elev-oncolor-inset {
+  box-shadow:
+    inset 3px 3px 7px var(--color-dark, rgba(0, 0, 0, 0.35)),
+    inset -2px -2px 6px var(--color-light, rgba(255, 255, 255, 0.08));
+}
+
+.press-tactile {
+  transition:
+    box-shadow var(--duration-micro) var(--ease-standard),
+    transform var(--duration-micro) var(--ease-standard);
+}
+.press-tactile:active {
+  transform: scale(var(--press-scale));
 }

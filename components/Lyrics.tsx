@@ -31,7 +31,7 @@ function Word({
     <span className="relative inline-block mr-[0.25em]">
       <span className="text-white/35">{text}</span>
       <span
-        className="absolute inset-0 overflow-hidden text-text whitespace-nowrap"
+        className="absolute inset-0 overflow-hidden text-white whitespace-nowrap"
         style={{ width: overlayWidth, transition }}
       >
         {text}
@@ -96,11 +96,11 @@ function Lyrics({
   }, [idx]);
 
   if (!lyricsUrl) {
-    return <p className="text-muted text-sm">Pas de paroles trouvées pour ce titre.</p>;
+    return <p className="text-white/60 text-sm">Pas de paroles trouvées pour ce titre.</p>;
   }
 
   if (lines.length === 0) {
-    return <p className="text-muted text-sm">Chargement des paroles…</p>;
+    return <p className="text-white/60 text-sm">Chargement des paroles…</p>;
   }
 
   return (
@@ -142,7 +142,7 @@ function Lyrics({
                 );
               })
             ) : (
-              <span className="text-text">{line.text}</span>
+              <span className="text-white">{line.text}</span>
             )}
           </div>
         );

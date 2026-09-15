@@ -9,6 +9,8 @@ export type Track = {
   coverUrl: string | null; // URL iTunes ou fichier local/Blob
   colorPrimary: string; // couleur dominante assombrie, extraite de la pochette
   colorSecondary: string; // couleur moyenne assombrie, en repli du dégradé
+  colorLight: string; // source claire pour l'effet néomorphique sur le fond coloré
+  colorDark: string; // source foncée pour l'effet néomorphique sur le fond coloré
   addedAt: string; // ISO date
 };
 
@@ -24,5 +26,7 @@ export function getPlaylist(): Track[] {
     coverUrl: t.coverUrl ?? null,
     colorPrimary: t.colorPrimary ?? "#1d1b18",
     colorSecondary: t.colorSecondary ?? "#0a0a0a",
+    colorLight: t.colorLight ?? "rgba(255,255,255,0.08)",
+    colorDark: t.colorDark ?? "rgba(0,0,0,0.45)",
   })) as Track[];
 }

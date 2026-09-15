@@ -267,7 +267,12 @@ async function main() {
     }
     const colors = colorImageBuffer
       ? await extractColors(colorImageBuffer)
-      : { primary: "#1d1b18", secondary: "#0a0a0a" };
+      : {
+          primary: "#1d1b18",
+          secondary: "#0a0a0a",
+          colorLight: "rgba(255,255,255,0.08)",
+          colorDark: "rgba(0,0,0,0.45)",
+        };
 
     const { audioUrl, lyricsUrl, wordsUrl, localCoverUrl } = await storeFiles({
       id,
@@ -298,6 +303,8 @@ async function main() {
       coverUrl,
       colorPrimary: colors.primary,
       colorSecondary: colors.secondary,
+      colorLight: colors.colorLight,
+      colorDark: colors.colorDark,
       addedAt: new Date().toISOString(),
     });
 

@@ -49,7 +49,7 @@ Le script :
 4. si rien n'est trouvé, essaie les sous-titres YouTube de la vidéo (qualité variable selon la vidéo — voir le commentaire dans `scripts/lib/vttToLrc.mjs`),
 5. si des paroles ont été trouvées, aligne les mots avec Whisper pour l'animation mot par mot (voir `scripts/lib/alignWords.mjs` pour le détail de la méthode et ses limites),
 6. cherche la pochette d'album sur iTunes (repli sur la miniature YouTube si rien trouvé),
-7. extrait les couleurs dominantes de la pochette (assombries) pour le fond dynamique de l'app,
+7. extrait les couleurs dominantes de la pochette (assombries, + variantes claire/foncée pour les reliefs néomorphiques du lecteur) pour le fond dynamique de l'app,
 8. ajoute le titre dans `data/manifest.json`.
 
 Recommencer la commande pour chacun de tes 108 titres actuels, puis 1-2 fois par mois pour les nouveaux.
@@ -90,6 +90,7 @@ Ensuite, à chaque nouveau titre : `npm run add-track -- ...` en local (avec le 
 - Les paroles récupérées via les sous-titres YouTube (fallback) peuvent être imprécises ou absentes selon le type de vidéo — voir le commentaire dans `scripts/lib/vttToLrc.mjs`.
 - Le timing mot par mot est une approximation : Whisper donne des instants de prononciation réels, mais le texte affiché reste celui de lrclib (fiable), donc le mapping entre les deux n'est pas toujours parfait (mots regroupés si Whisper en loupe, retour au linéaire si Whisper ne détecte rien sur une ligne). Voir `scripts/lib/alignWords.mjs`.
 - Le fond dynamique reprend la logique d'Apple Music (couleur dominante de la pochette, assombrie pour rester lisible) mais reste une approximation simple (pixel le plus saturé + moyenne de l'image) — pas l'algorithme exact d'Apple.
-- Design encore minimaliste au-delà du fond dynamique (pas de néomorphisme sur les contrôles) — refonte visuelle en attente des tokens de Cap Finances.
+- Design néomorphique appliqué (tokens Cap Finances) : mode clair/sombre manuel (bouton dans l'en-tête, persisté dans `localStorage`), playlist en surfaces neutres, lecteur plein écran en relief teinté par la couleur de la pochette (`colorLight`/`colorDark`, calculés à l'ingestion).
+- Les titres ajoutés avant cette mise à jour n'ont pas `colorLight`/`colorDark` dans le manifest — repli neutre automatique en attendant une ré-ingestion.
 - Le geste de glissement de la feuille (lecteur) est une translation simple avec seuil de bascule à 30% de l'écran — pas de physique d'inertie façon iOS natif.
 - Le bouton de sortie audio (icône cast) n'apparaît que dans Safari (iOS/Mac) — c'est une API spécifique à WebKit, absente de Chrome/Firefox.
