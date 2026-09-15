@@ -16,22 +16,6 @@
     "addedAt": "2026-09-15T06:41:20.487Z"
   },
   {
-    "id": "camila-cabello-never-be-the-same",
-    "title": "Never Be the Same",
-    "artist": "Camila Cabello",
-    "duration": 229,
-    "audioUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/audio/camila-cabello-never-be-the-same-CisrQadro436Oy7KyXlOsjaDNl0Aa7.mp3",
-    "lyricsUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/lyrics/camila-cabello-never-be-the-same-UvwrWzvfof5Gj4sFwPbcv7awzVdItX.lrc",
-    "wordsUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/lyrics/camila-cabello-never-be-the-same.words-ULTkJdWzWGUEQI6PirP6UCJGPgC28H.json",
-    "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/85/28/70/85287029-19b9-cbe3-d1ab-300781875bf4/886446870298.jpg/600x600bb.jpg",
-    "colorPrimary": "#856644",
-    "colorSecondary": "#2d1f1d",
-    "colorSoft": "rgba(242, 185, 124, 0.16)",
-    "colorLight": "rgba(249, 220, 190, 0.18)",
-    "colorDark": "rgba(73, 56, 37, 0.45)",
-    "addedAt": "2026-09-15T06:42:04.527Z"
-  },
-  {
     "id": "maroon-5-animals",
     "title": "Animals",
     "artist": "Maroon 5",
@@ -302,5 +286,21 @@
     "colorLight": "rgba(198, 150, 133, 0.18)",
     "colorDark": "rgba(42, 14, 3, 0.45)",
     "addedAt": "2026-09-15T06:51:34.269Z"
+  },
+  {
+    "id": "camila-cabello-never-be-the-same",
+    "title": "Never Be the Same",
+    "artist": "Camila Cabello",
+    "duration": 229,
+    "audioUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/audio/camila-cabello-never-be-the-same-5e5zDx3M2uN6YkcIZbxiylfNAt4T0S.mp3",
+    "lyricsUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/lyrics/camila-cabello-never-be-the-same-o8lY97Y7O8XVJ5iytequHx8EEZGpvc.lrc",
+    "wordsUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/lyrics/camila-cabello-never-be-the-same.words-E2KYFw8GsHQg6dy0f46j71AuA5bq78.json",
+    "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/85/28/70/85287029-19b9-cbe3-d1ab-300781875bf4/886446870298.jpg/600x600bb.jpg",
+    "colorPrimary": "#856644",
+    "colorSecondary": "#2d1f1d",
+    "colorSoft": "rgba(242, 185, 124, 0.16)",
+    "colorLight": "rgba(249, 220, 190, 0.18)",
+    "colorDark": "rgba(73, 56, 37, 0.45)",
+    "addedAt": "2026-09-15T07:20:32.712Z"
   }
 ]

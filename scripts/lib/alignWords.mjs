@@ -16,13 +16,25 @@ export function assignWordTimes(lines, whisperStarts, totalDuration) {
   const sortedStarts = [...whisperStarts].sort((a, b) => a - b);
   const result = [];
 
+  // Rythme de parole/chant maximum plausible (mots/seconde) — sert à borner
+  // la fenêtre de repli pour ne pas étirer une ligne courte sur tout le
+  // silence qui la sépare de la ligne suivante.
+  const MAX_WORDS_PER_SECOND = 2.5;
+
   for (let i = 0; i < lines.length; i++) {
     const lineStart = lines[i].time;
-    const lineEnd = i + 1 < lines.length ? lines[i + 1].time : totalDuration;
+    const rawLineEnd = i + 1 < lines.length ? lines[i + 1].time : totalDuration;
     const words = lines[i].text.split(/\s+/).filter(Boolean);
     if (words.length === 0) continue;
 
-    const windowStarts = sortedStarts.filter((t) => t >= lineStart && t < lineEnd);
+    const windowStarts = sortedStarts.filter((t) => t >= lineStart && t < rawLineEnd);
+    // Si Whisper a détecté des mots dans la fenêtre brute, on la garde telle
+    // quelle (les instants réels bornent déjà correctement). Sinon, on ne
+    // remonte pas jusqu'à la ligne suivante : on utilise la durée qu'il
+    // faudrait réalistement pour prononcer ces mots, jamais plus.
+    const estimatedDuration = words.length / MAX_WORDS_PER_SECOND;
+    const lineEnd =
+      windowStarts.length > 0 ? rawLineEnd : Math.min(rawLineEnd, lineStart + estimatedDuration);
 
     for (let j = 0; j < words.length; j++) {
       let time;

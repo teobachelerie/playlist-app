@@ -10,7 +10,9 @@ python3 -m venv .venv
 .venv/bin/pip install -r scripts/requirements.txt
 ```
 
-Le script détecte automatiquement `.venv` et l'utilise pour Whisper — pas besoin d'activer l'environnement virtuel avant de lancer `npm run add-track`.
+Le script détecte automatiquement `.venv` et l'utilise pour Whisper/WhisperX — pas besoin d'activer l'environnement virtuel avant de lancer `npm run add-track`.
+
+**WhisperX** (alignement forcé du texte officiel sur l'audio, plus précis que l'ancienne méthode) est essayé en premier automatiquement ; en cas d'échec ou d'absence, le script retombe sur l'ancienne méthode (Whisper + recalage approximatif) sans bloquer l'ajout du titre. Dépendance lourde (torch inclus, plusieurs centaines de Mo à quelques Go au premier téléchargement des modèles).
 
 La première fois que tu ajoutes un titre, `faster-whisper` télécharge son modèle (~500 Mo, modèle "small") — ça prend un peu de temps mais **une seule fois pour toujours**, il est ensuite mis en cache sur ta machine et réutilisé pour tous les titres suivants. Le calcul d'alignement lui-même (10-30s par titre) tourne une fois par titre, à l'ajout — jamais à la lecture.
 

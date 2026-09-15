@@ -151,6 +151,24 @@ async function runWhisperAlignment(mp3Path) {
   return JSON.parse(stdout);
 }
 
+async function runForcedAlignment(tmpDir, mp3Path, lines, duration) {
+  const segments = lines.map((line, i) => ({
+    text: line.text,
+    start: line.time,
+    end: lines[i + 1]?.time ?? duration,
+  }));
+  const segmentsPath = path.join(tmpDir, "segments.json");
+  await writeFile(segmentsPath, JSON.stringify(segments), "utf-8");
+
+  const scriptPath = path.join(ROOT, "scripts", "align_words_forced.py");
+  const venvPython = path.join(ROOT, ".venv", "bin", "python3");
+  const pythonBin = existsSync(venvPython) ? venvPython : "python3";
+  const { stdout } = await execFileAsync(pythonBin, [scriptPath, mp3Path, segmentsPath], {
+    maxBuffer: 1024 * 1024 * 20,
+  });
+  return JSON.parse(stdout);
+}
+
 async function storeFiles({ id, mp3Path, lrcContent, wordsContent, thumbnailPath }) {
   const token = process.env.BLOB_READ_WRITE_TOKEN;
 
@@ -245,10 +263,17 @@ async function main() {
 
     let wordsContent = null;
     if (lrcContent) {
-      const whisperWords = await runWhisperAlignment(mp3Path);
-      const starts = whisperWords.map((w) => w.start);
       const lines = parseLrc(lrcContent);
-      const wordTimes = assignWordTimes(lines, starts, duration);
+      let wordTimes = null;
+      try {
+        console.log("→ Alignement forcé (WhisperX) — texte officiel calé directement sur l'audio…");
+        wordTimes = await runForcedAlignment(tmpDir, mp3Path, lines, duration);
+      } catch (err) {
+        console.log(`  WhisperX indisponible ou en échec (${err.message}), repli sur l'ancienne méthode…`);
+        const whisperWords = await runWhisperAlignment(mp3Path);
+        const starts = whisperWords.map((w) => w.start);
+        wordTimes = assignWordTimes(lines, starts, duration);
+      }
       wordsContent = JSON.stringify(wordTimes);
     }
 

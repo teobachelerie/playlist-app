@@ -65,6 +65,8 @@ export default function PlayerSheet({
   const [panel, setPanel] = useState<PanelMode>("lyrics");
   const [dragY, setDragY] = useState<number | null>(null);
   const dragStartYRef = useRef<number | null>(null);
+  const lastMoveRef = useRef<{ y: number; t: number } | null>(null);
+  const velocityRef = useRef(0); // px/ms, positif = vers le bas
   const [airplaySupported, setAirplaySupported] = useState(false);
 
   useEffect(() => {
@@ -78,6 +80,8 @@ export default function PlayerSheet({
   // indépendante affichée par le composant parent).
   function handlePointerDown(e: React.PointerEvent) {
     dragStartYRef.current = e.clientY;
+    lastMoveRef.current = { y: e.clientY, t: performance.now() };
+    velocityRef.current = 0;
     (e.target as Element).setPointerCapture(e.pointerId);
   }
 
@@ -85,6 +89,15 @@ export default function PlayerSheet({
     if (dragStartYRef.current === null) return;
     const delta = e.clientY - dragStartYRef.current;
     setDragY(Math.max(delta, 0));
+
+    // Vitesse instantanée (px/ms) sur ce dernier segment de mouvement — sert
+    // à détecter un petit coup sec, pas seulement une distance parcourue.
+    const now = performance.now();
+    if (lastMoveRef.current) {
+      const dt = now - lastMoveRef.current.t;
+      if (dt > 0) velocityRef.current = (e.clientY - lastMoveRef.current.y) / dt;
+    }
+    lastMoveRef.current = { y: e.clientY, t: now };
   }
 
   function handlePointerUp() {
@@ -92,10 +105,15 @@ export default function PlayerSheet({
       dragStartYRef.current = null;
       return;
     }
-    // Seuil de bascule : 30% de l'écran suffit à fermer.
-    if (dragY > window.innerHeight * 0.3) onOpenChange(false);
+    // Ferme si la distance dépasse 30% de l'écran, OU si c'est un petit coup
+    // sec vers le bas (peu de distance mais geste rapide) — sans ça, un
+    // léger mouvement du pouce n'avait aucun effet.
+    const isFarEnough = dragY > window.innerHeight * 0.3;
+    const isQuickFlick = dragY > 24 && velocityRef.current > 0.5;
+    if (isFarEnough || isQuickFlick) onOpenChange(false);
     setDragY(null);
     dragStartYRef.current = null;
+    lastMoveRef.current = null;
   }
 
   // Position de la feuille : ouverte = translateY(0), fermée = entièrement
