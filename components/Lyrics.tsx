@@ -5,9 +5,9 @@ import { parseLrc, activeLineIndex, type LyricLine, type WordTiming } from "@/li
 
 // Whisper (et le pipeline d'alignement) a tendance à détecter les mots avec
 // un léger retard systématique par rapport au son réel — cette compensation
-// avance artificiellement le temps utilisé pour le surlignage. À ajuster
-// si le décalage ressenti persiste (en secondes).
-const LEAD_OFFSET = 0.18;
+// avance artificiellement le temps utilisé pour le surlignage. Valeur reduite
+// suite à retour : trop d'avance déclenchait le mot avant qu'il soit chanté.
+const LEAD_OFFSET = 0.05;
 
 type WordWithDuration = WordTiming & { duration: number };
 
@@ -55,7 +55,7 @@ const StaticLine = memo(function StaticLine({
   onClick: () => void;
 }) {
   return (
-    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-35">
+    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-35 w-full flex flex-wrap">
       {words.length > 0 ? (
         words.map((w, j) => <StaticWord key={j} text={w} done={done} />)
       ) : (
@@ -77,7 +77,7 @@ function ActiveLine({
   onClick: () => void;
 }) {
   return (
-    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-100">
+    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-100 w-full flex flex-wrap">
       {words.length > 0 ? (
         words.map((w, j) => <AnimatedWord key={j} {...w} currentTime={currentTime} />)
       ) : (
@@ -134,6 +134,9 @@ function Lyrics({
 
   // Regroupement mots-par-ligne + durée de chaque mot calculés une seule
   // fois (pas à chaque frame) — c'était le vrai coût qui causait les à-coups.
+  // Durée plafonnée : sans ça, le dernier mot d'une ligne "hérite" du silence
+  // avant la ligne suivante et son fondu traîne bien après avoir été chanté.
+  const MAX_WORD_DURATION = 0.6;
   const wordsByLine = useMemo(() => {
     const groups: WordWithDuration[][] = lines.map(() => []);
     for (let i = 0; i < lines.length; i++) {
@@ -141,7 +144,10 @@ function Lyrics({
       const nextLineStart = lines[i + 1]?.time ?? (lineWords[lineWords.length - 1]?.time ?? 0) + 3;
       groups[i] = lineWords.map((w, j) => {
         const next = lineWords[j + 1];
-        const duration = Math.max(0.1, (next ? next.time : nextLineStart) - w.time);
+        const duration = Math.min(
+          MAX_WORD_DURATION,
+          Math.max(0.1, (next ? next.time : nextLineStart) - w.time)
+        );
         return { ...w, duration };
       });
     }
@@ -181,6 +187,7 @@ function Lyrics({
         return (
           <div
             key={i}
+            className="w-full"
             ref={(el) => {
               lineRefs.current[i] = el;
             }}
