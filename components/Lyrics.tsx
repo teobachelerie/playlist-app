@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { parseLrc, activeLineIndex, type LyricLine, type WordTiming } from "@/lib/lrc";
 
 // Whisper (et le pipeline d'alignement) a tendance à détecter les mots avec
@@ -9,20 +9,11 @@ import { parseLrc, activeLineIndex, type LyricLine, type WordTiming } from "@/li
 // si le décalage ressenti persiste (en secondes).
 const LEAD_OFFSET = 0.18;
 
-function Word({
-  text,
-  time,
-  duration,
-  currentTime,
-}: {
-  text: string;
-  time: number;
-  duration: number;
-  currentTime: number;
-}) {
-  // Trois états : pas encore prononcé (gris), en train d'être prononcé
-  // (fondu gris -> blanc animé sur la durée réelle du mot), déjà prononcé
-  // (blanc, sans animation pour éviter de rejouer le fondu à chaque rendu).
+type WordWithDuration = WordTiming & { duration: number };
+
+// Mot de la ligne EN COURS uniquement — reçoit le temps en direct et anime
+// son propre fondu. Les autres lignes n'ont pas besoin de ça (voir StaticWord).
+function AnimatedWord({ text, time, duration, currentTime }: WordWithDuration & { currentTime: number }) {
   let overlayWidth = "0%";
   let transition = "none";
 
@@ -43,6 +34,56 @@ function Word({
         {text}
       </span>
     </span>
+  );
+}
+
+// Mot d'une ligne passée ou à venir — état figé (entièrement chanté ou pas
+// encore), aucun calcul lié à currentTime, donc jamais re-rendu à chaque frame.
+function StaticWord({ text, done }: { text: string; done: boolean }) {
+  return <span className={`mr-[0.25em] ${done ? "text-text" : "text-tertiary"}`}>{text}</span>;
+}
+
+const StaticLine = memo(function StaticLine({
+  words,
+  fallbackText,
+  done,
+  onClick,
+}: {
+  words: string[];
+  fallbackText: string;
+  done: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-35">
+      {words.length > 0 ? (
+        words.map((w, j) => <StaticWord key={j} text={w} done={done} />)
+      ) : (
+        <span className={done ? "text-text" : "text-tertiary"}>{fallbackText}</span>
+      )}
+    </div>
+  );
+});
+
+function ActiveLine({
+  words,
+  fallbackText,
+  currentTime,
+  onClick,
+}: {
+  words: WordWithDuration[];
+  fallbackText: string;
+  currentTime: number;
+  onClick: () => void;
+}) {
+  return (
+    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-100">
+      {words.length > 0 ? (
+        words.map((w, j) => <AnimatedWord key={j} {...w} currentTime={currentTime} />)
+      ) : (
+        <span className="text-text">{fallbackText}</span>
+      )}
+    </div>
   );
 }
 
@@ -91,6 +132,22 @@ function Lyrics({
     };
   }, [lyricsUrl, wordsUrl]);
 
+  // Regroupement mots-par-ligne + durée de chaque mot calculés une seule
+  // fois (pas à chaque frame) — c'était le vrai coût qui causait les à-coups.
+  const wordsByLine = useMemo(() => {
+    const groups: WordWithDuration[][] = lines.map(() => []);
+    for (let i = 0; i < lines.length; i++) {
+      const lineWords = words.filter((w) => w.lineIndex === i);
+      const nextLineStart = lines[i + 1]?.time ?? (lineWords[lineWords.length - 1]?.time ?? 0) + 3;
+      groups[i] = lineWords.map((w, j) => {
+        const next = lineWords[j + 1];
+        const duration = Math.max(0.1, (next ? next.time : nextLineStart) - w.time);
+        return { ...w, duration };
+      });
+    }
+    return groups;
+  }, [lines, words]);
+
   const idx = activeLineIndex(lines, currentTime + LEAD_OFFSET);
   const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -118,7 +175,7 @@ function Lyrics({
       }}
     >
       {lines.map((line, i) => {
-        const lineWords = words.filter((w) => w.lineIndex === i);
+        const lineWords = wordsByLine[i] ?? [];
         const active = i === idx;
 
         return (
@@ -127,28 +184,21 @@ function Lyrics({
             ref={(el) => {
               lineRefs.current[i] = el;
             }}
-            onClick={() => onSeek(lineWords[0]?.time ?? line.time)}
-            className={`cursor-pointer text-3xl font-bold leading-tight transition-opacity duration-500 ${
-              active ? "opacity-100" : "opacity-35"
-            }`}
           >
-            {lineWords.length > 0 ? (
-              lineWords.map((w, j) => {
-                const next = lineWords[j + 1];
-                const nextLineStart = lines[i + 1]?.time ?? w.time + 3;
-                const duration = Math.max(0.1, (next ? next.time : nextLineStart) - w.time);
-                return (
-                  <Word
-                    key={j}
-                    text={w.text}
-                    time={w.time}
-                    duration={duration}
-                    currentTime={currentTime + LEAD_OFFSET}
-                  />
-                );
-              })
+            {active ? (
+              <ActiveLine
+                words={lineWords}
+                fallbackText={line.text}
+                currentTime={currentTime + LEAD_OFFSET}
+                onClick={() => onSeek(lineWords[0]?.time ?? line.time)}
+              />
             ) : (
-              <span className="text-text">{line.text}</span>
+              <StaticLine
+                words={lineWords.map((w) => w.text)}
+                fallbackText={line.text}
+                done={i < idx}
+                onClick={() => onSeek(lineWords[0]?.time ?? line.time)}
+              />
             )}
           </div>
         );
