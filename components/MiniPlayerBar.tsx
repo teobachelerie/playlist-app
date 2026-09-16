@@ -18,13 +18,18 @@ function MiniPlayerBar({
   return (
     <button
       onClick={onOpen}
-      className="press-tactile fixed inset-x-3 bottom-3 z-40 flex items-center gap-3 px-3 py-2 rounded-xl text-left bg-surface shadow-raised"
+      className="press-tactile glass-surface fixed inset-x-3 bottom-3 z-40 flex items-center gap-3 px-3 py-2 rounded-xl text-left"
     >
       {track.coverUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={track.coverUrl} alt="" className="w-10 h-10 rounded-sm object-cover shrink-0" />
+        <img
+          src={track.coverUrl}
+          alt=""
+          style={{ viewTransitionName: "track-cover" }}
+          className="w-10 h-10 rounded-sm object-cover shrink-0"
+        />
       ) : (
-        <div className="w-10 h-10 rounded-sm bg-inset shrink-0" />
+        <div style={{ viewTransitionName: "track-cover" }} className="w-10 h-10 rounded-sm bg-inset shrink-0" />
       )}
       <span className="min-w-0 flex-1">
         <span className="block truncate text-body text-text">{track.title}</span>

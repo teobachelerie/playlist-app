@@ -162,10 +162,35 @@ body {
 }
 
 .dynamic-bg {
-  background: radial-gradient(circle at 30% 0%, var(--color-soft) 0%, transparent 60%), var(--surface-base);
+  background: radial-gradient(circle at 30% 0%, var(--color-soft) 0%, transparent 60%),
+    color-mix(in srgb, var(--surface-base) 82%, transparent);
+  backdrop-filter: blur(30px) saturate(1.7);
+  -webkit-backdrop-filter: blur(30px) saturate(1.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
   transition:
     --color-soft 0.8s ease,
     background var(--duration-base) var(--ease-standard);
+}
+
+/* Verre dépoli pour la mini-barre — même logique que .dynamic-bg mais sans
+   la teinte couleur (elle reste neutre, discrète). */
+.glass-surface {
+  background: color-mix(in srgb, var(--surface-raised) 78%, transparent);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* View Transitions : on désactive le fondu par défaut de toute la page
+   (sinon tout clignote au moindre changement), et on garde une animation
+   personnalisée uniquement pour la pochette qui doit "grandir" entre la
+   mini-barre et le lecteur plein écran. */
+::view-transition-group(*) {
+  animation-duration: 0s;
+}
+::view-transition-group(track-cover) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Élévations néomorphiques "sur couleur" — utilisent la teinte du titre en
