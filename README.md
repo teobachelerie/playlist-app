@@ -12,7 +12,7 @@ python3 -m venv .venv
 
 Le script détecte automatiquement `.venv` et l'utilise pour Whisper/WhisperX — pas besoin d'activer l'environnement virtuel avant de lancer `npm run add-track`.
 
-**WhisperX** (alignement forcé du texte officiel sur l'audio, plus précis que l'ancienne méthode) est essayé en premier automatiquement ; en cas d'échec ou d'absence, le script retombe sur l'ancienne méthode (Whisper + recalage approximatif) sans bloquer l'ajout du titre. Dépendance lourde (torch inclus, plusieurs centaines de Mo à quelques Go au premier téléchargement des modèles).
+**WhisperX** (alignement forcé du texte officiel sur l'audio) a été testé mais abandonné — conflit de version (`ctranslate2`) sur Python 3.14/Mac ARM. Le code de repli reste en place dans `add-track.mjs`/`align_words_forced.py` si tu veux réessayer un jour avec un environnement Python plus ancien, mais `whisperx` n'est plus dans `requirements.txt` par défaut.
 
 La première fois que tu ajoutes un titre, `faster-whisper` télécharge son modèle (~500 Mo, modèle "small") — ça prend un peu de temps mais **une seule fois pour toujours**, il est ensuite mis en cache sur ta machine et réutilisé pour tous les titres suivants. Le calcul d'alignement lui-même (10-30s par titre) tourne une fois par titre, à l'ajout — jamais à la lecture.
 
@@ -34,6 +34,11 @@ Tant que `BLOB_READ_WRITE_TOKEN` n'est pas défini, le script copie les fichiers
 
 ```bash
 npm run add-track -- "https://youtube.com/watch?v=XXXX" "Titre du morceau" "Nom de l'artiste"
+```
+
+**Ou sans lien** : donne juste le titre et l'artiste comme premier argument (pas d'URL), yt-dlp cherche lui-même sur YouTube et prend le premier résultat :
+```bash
+npm run add-track -- "Titre Artiste" "Titre du morceau" "Nom de l'artiste"
 ```
 
 ## 3. Supprimer un titre

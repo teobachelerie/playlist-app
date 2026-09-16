@@ -1,5 +1,9 @@
 #!/usr/bin/env node
-// Usage : npm run add-track -- "<url YouTube>" "<Titre>" "<Artiste>"
+// Usage : npm run add-track -- "<url YouTube OU terme de recherche>" "<Titre>" "<Artiste>"
+//
+// Si le premier argument n'est pas une URL (ne commence pas par "http"), il
+// est traité comme une recherche YouTube — yt-dlp cherche lui-même et prend
+// le premier résultat (ytsearch1:), au lieu d'exiger un lien exact.
 //
 // Pré-requis sur ta machine :
 //   - yt-dlp et ffmpeg (brew install yt-dlp ffmpeg)
@@ -22,11 +26,14 @@ import { extractColors } from "./lib/extractColors.mjs";
 
 const execFileAsync = promisify(execFile);
 
-const [, , url, title, artist] = process.argv;
-if (!url || !title || !artist) {
-  console.error('Usage: npm run add-track -- "<url YouTube>" "<Titre>" "<Artiste>"');
+const [, , rawSource, title, artist] = process.argv;
+if (!rawSource || !title || !artist) {
+  console.error('Usage: npm run add-track -- "<url YouTube ou recherche>" "<Titre>" "<Artiste>"');
   process.exit(1);
 }
+// yt-dlp accepte "ytsearchN:requête" comme pseudo-URL et effectue lui-même
+// la recherche — évite d'avoir à fournir un lien exact pour chaque titre.
+const url = rawSource.startsWith("http") ? rawSource : `ytsearch1:${rawSource}`;
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const MANIFEST_PATH = path.join(ROOT, "data", "manifest.json");
