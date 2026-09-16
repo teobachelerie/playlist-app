@@ -100,20 +100,28 @@ function Lyrics({
 }) {
   const [lines, setLines] = useState<LyricLine[]>([]);
   const [words, setWords] = useState<WordTiming[]>([]);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
     setLines([]);
     setWords([]);
+    setStatus("loading");
     if (!lyricsUrl) return;
     let cancelled = false;
 
     fetch(lyricsUrl)
       .then((res) => (res.ok ? res.text() : Promise.reject(res.status)))
       .then((raw) => {
-        if (!cancelled) setLines(parseLrc(raw));
+        if (cancelled) return;
+        const parsed = parseLrc(raw);
+        setLines(parsed);
+        setStatus(parsed.length > 0 ? "ready" : "error");
       })
       .catch(() => {
-        if (!cancelled) setLines([]);
+        if (!cancelled) {
+          setLines([]);
+          setStatus("error");
+        }
       });
 
     if (wordsUrl) {
@@ -168,8 +176,12 @@ function Lyrics({
     return <p className="text-muted text-sm">Pas de paroles trouvées pour ce titre.</p>;
   }
 
-  if (lines.length === 0) {
+  if (status === "loading") {
     return <p className="text-muted text-sm">Chargement des paroles…</p>;
+  }
+
+  if (status === "error") {
+    return <p className="text-muted text-sm">Paroles indisponibles pour ce titre.</p>;
   }
 
   return (

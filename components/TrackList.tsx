@@ -1,9 +1,10 @@
 "use client";
 
+import { memo } from "react";
 import type { Track } from "@/lib/playlist";
 import ThemeToggle from "@/components/ThemeToggle";
 
-export default function TrackList({
+function TrackList({
   tracks,
   currentId,
   onSelect,
@@ -46,6 +47,8 @@ export default function TrackList({
                     <img
                       src={track.coverUrl}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       className="w-11 h-11 rounded-sm object-cover shrink-0"
                     />
                   ) : (
@@ -70,3 +73,5 @@ export default function TrackList({
     </div>
   );
 }
+
+export default memo(TrackList);

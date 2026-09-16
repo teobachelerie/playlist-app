@@ -1,9 +1,10 @@
 "use client";
 
+import { memo } from "react";
 import { Play, Pause } from "lucide-react";
 import type { Track } from "@/lib/playlist";
 
-export default function MiniPlayerBar({
+function MiniPlayerBar({
   track,
   isPlaying,
   onTogglePlay,
@@ -41,3 +42,5 @@ export default function MiniPlayerBar({
     </button>
   );
 }
+
+export default memo(MiniPlayerBar);

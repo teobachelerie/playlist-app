@@ -31,6 +31,7 @@ export default function PlayerSheet({
   isPlaying,
   currentTime,
   duration,
+  playbackError,
   shuffle,
   repeat,
   open,
@@ -49,6 +50,7 @@ export default function PlayerSheet({
   isPlaying: boolean;
   currentTime: number;
   duration: number;
+  playbackError: boolean;
   shuffle: boolean;
   repeat: boolean;
   open: boolean;
@@ -180,6 +182,9 @@ export default function PlayerSheet({
             <div className="min-w-0">
               <h1 className="text-xl text-text truncate">{track.title}</h1>
               <p className="text-muted truncate">{track.artist}</p>
+              {playbackError && (
+                <p className="text-red text-xs mt-1">Lecture impossible pour ce titre — passe au suivant.</p>
+              )}
             </div>
           </div>
         </div>

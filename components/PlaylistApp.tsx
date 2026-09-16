@@ -14,6 +14,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [playbackError, setPlaybackError] = useState(false);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -22,7 +23,18 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const current = hasSelected ? order[position] ?? null : null;
 
   useEffect(() => {
-    if (isPlaying) audioRef.current?.play();
+    setPlaybackError(false);
+  }, [position]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      setPlaybackError(false);
+      audioRef.current?.play().catch((err) => {
+        console.error("Lecture impossible :", err);
+        setIsPlaying(false);
+        setPlaybackError(true);
+      });
+    }
   }, [position, isPlaying]);
 
   // Suivi fin du temps de lecture via requestAnimationFrame plutôt que
@@ -54,8 +66,10 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
     navigator.mediaSession.setActionHandler("nexttrack", playNext);
     navigator.mediaSession.setActionHandler("play", () => {
-      audioRef.current?.play();
-      setIsPlaying(true);
+      audioRef.current
+        ?.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
     });
     navigator.mediaSession.setActionHandler("pause", () => {
       audioRef.current?.pause();
@@ -76,11 +90,23 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.pause();
-    } else {
-      audioRef.current.play();
+      setIsPlaying(false);
+      return;
     }
-    setIsPlaying(!isPlaying);
+    setPlaybackError(false);
+    audioRef.current
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch((err) => {
+        // Ne pas afficher "en lecture" si ça a réellement échoué (fichier
+        // cassé, etc.) — avant, l'état passait à "lecture" quoi qu'il arrive,
+        // ce qui donnait l'impression que ça restait bloqué à zéro.
+        console.error("Lecture impossible :", err);
+        setIsPlaying(false);
+        setPlaybackError(true);
+      });
   }
+  const togglePlayCb = useCallback(togglePlay, [isPlaying]);
 
   function playNext() {
     if (position + 1 < order.length) {
@@ -136,19 +162,20 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     setCurrentTime(time);
   }
   const seekCb = useCallback(seek, []);
+  const openSheetCb = useCallback(() => setSheetOpen(true), []);
 
   return (
     <div className="h-dvh overflow-hidden relative bg-base">
       <div className="h-full overflow-y-auto">
-        <TrackList tracks={tracks} currentId={current?.id ?? null} onSelect={selectTrack} />
+        <TrackList tracks={tracks} currentId={current?.id ?? null} onSelect={selectTrackCb} />
       </div>
 
       {current && !sheetOpen && (
         <MiniPlayerBar
           track={current}
           isPlaying={isPlaying}
-          onTogglePlay={togglePlay}
-          onOpen={() => setSheetOpen(true)}
+          onTogglePlay={togglePlayCb}
+          onOpen={openSheetCb}
         />
       )}
 
@@ -159,11 +186,12 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           isPlaying={isPlaying}
           currentTime={currentTime}
           duration={duration}
+          playbackError={playbackError}
           shuffle={shuffle}
           repeat={repeat}
           open={sheetOpen}
           onOpenChange={setSheetOpen}
-          onTogglePlay={togglePlay}
+          onTogglePlay={togglePlayCb}
           onNext={playNext}
           onPrevious={playPrevious}
           onToggleShuffle={toggleShuffle}
@@ -180,6 +208,11 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           src={current.audioUrl}
           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
           onEnded={playNext}
+          onError={() => {
+            console.error("Erreur de chargement audio pour :", current.title, current.audioUrl);
+            setPlaybackError(true);
+            setIsPlaying(false);
+          }}
         />
       )}
     </div>
