@@ -175,6 +175,14 @@ body {
   box-shadow: var(--elev-raised);
 }
 
+/* Mini-barre "now playing" — surface neutre légèrement teintée par la
+   couleur de la pochette en cours (via --color-soft, posée en style inline
+   par le composant), pour se distinguer du reste de la page sans redevenir
+   un aplat saturé. */
+.mini-tint {
+  background: linear-gradient(120deg, var(--color-soft, transparent) 0%, transparent 60%), var(--surface-raised);
+}
+
 /* Élévations néomorphiques "sur couleur" — utilisent la teinte du titre en
    cours plutôt que les sources lumineuses neutres, pour que les contrôles du
    lecteur restent en relief sur le fond coloré. */
