@@ -70,6 +70,16 @@ export default function PlayerSheet({
   const lastMoveRef = useRef<{ y: number; t: number } | null>(null);
   const velocityRef = useRef(0); // px/ms, positif = vers le bas
   const [airplaySupported, setAirplaySupported] = useState(false);
+  const [animating, setAnimating] = useState(false);
+
+  // Désactive le flou du verre pendant que la feuille bouge (glissement ou
+  // animation d'ouverture/fermeture) — recalculer un flou plein écran à
+  // chaque frame d'un transform, c'est ce qui rendait l'ouverture saccadée.
+  useEffect(() => {
+    setAnimating(true);
+    const t = setTimeout(() => setAnimating(false), 400);
+    return () => clearTimeout(t);
+  }, [open]);
 
   useEffect(() => {
     // Détecté seulement après montage pour éviter un mismatch d'hydratation
@@ -144,7 +154,9 @@ export default function PlayerSheet({
       />
 
       <div
-        className="dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40"
+        className={`dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40 ${
+          dragY !== null || animating ? "dragging" : ""
+        }`}
         style={
           {
             transform,
@@ -195,7 +207,10 @@ export default function PlayerSheet({
 
         {/* Reste du contenu — pas de glissement ici, pour ne pas gêner le
             défilement tactile des paroles. */}
-        <div className="flex-1 overflow-hidden flex flex-col px-6 pb-8 gap-6">
+        <div
+          className="flex-1 overflow-hidden flex flex-col px-6 gap-6"
+          style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
+        >
           <div className="flex-1 overflow-hidden">
             {panel === "lyrics" && (
               <Lyrics
@@ -215,21 +230,20 @@ export default function PlayerSheet({
             {panel === "queue" && <Queue tracks={queue} onSelect={onSelectFromQueue} />}
           </div>
 
-          {/* Barre de progression — piste "enfoncée" façon néomorphisme,
-              avance affichée et seek au clic/glisser */}
+          {/* Barre de progression — plate, façon Apple Music (pas de relief
+              néomorphique ici), avance affichée et seek au clic/glisser */}
           <div className="space-y-1">
-            <div className="rounded-full px-3 py-2 bg-inset shadow-inset-sm">
-              <input
-                type="range"
-                min={0}
-                max={duration || 0}
-                value={Math.min(currentTime, duration || 0)}
-                step={0.1}
-                onChange={(e) => onSeek(parseFloat(e.target.value))}
-                className="w-full accent-accent h-1 block"
-                aria-label="Progression du titre"
-              />
-            </div>
+            <input
+              type="range"
+              min={0}
+              max={duration || 0}
+              value={Math.min(currentTime, duration || 0)}
+              step={0.1}
+              onChange={(e) => onSeek(parseFloat(e.target.value))}
+              style={{ "--progress": `${duration ? (currentTime / duration) * 100 : 0}%` } as React.CSSProperties}
+              className="progress-range w-full"
+              aria-label="Progression du titre"
+            />
             <div className="flex justify-between text-xs text-muted">
               <span>{formatTime(currentTime)}</span>
               <span>-{formatTime(Math.max(duration - currentTime, 0))}</span>
