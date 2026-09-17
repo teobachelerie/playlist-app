@@ -222,18 +222,6 @@ body {
   z-index: 1;
 }
 
-/* View Transitions : on désactive le fondu par défaut de toute la page
-   (sinon tout clignote au moindre changement), et on garde une animation
-   personnalisée uniquement pour la pochette qui doit "grandir" entre la
-   mini-barre et le lecteur plein écran. */
-::view-transition-group(*) {
-  animation-duration: 0s;
-}
-::view-transition-group(track-cover) {
-  animation-duration: 0.45s;
-  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-}
-
 /* Élévations néomorphiques "sur couleur" — utilisent la teinte du titre en
    cours plutôt que les sources lumineuses neutres, pour que les contrôles du
    lecteur restent en relief sur le fond coloré. */

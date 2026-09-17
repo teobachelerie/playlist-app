@@ -25,11 +25,10 @@ function MiniPlayerBar({
         <img
           src={track.coverUrl}
           alt=""
-          style={{ viewTransitionName: "track-cover" }}
           className="w-12 h-12 rounded-sm object-cover shrink-0"
         />
       ) : (
-        <div style={{ viewTransitionName: "track-cover" }} className="w-12 h-12 rounded-sm bg-inset shrink-0" />
+        <div className="w-12 h-12 rounded-sm bg-inset shrink-0" />
       )}
       <span className="min-w-0 flex-1">
         <span className="block truncate text-body text-text">{track.title}</span>

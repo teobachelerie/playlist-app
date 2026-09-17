@@ -186,14 +186,10 @@ export default function PlayerSheet({
                 src={track.coverUrl}
                 alt=""
                 draggable={false}
-                style={{ viewTransitionName: open ? "track-cover" : "none" }}
                 className="w-16 h-16 rounded-md object-cover shrink-0 shadow-lg select-none"
               />
             ) : (
-              <div
-                style={{ viewTransitionName: open ? "track-cover" : "none" }}
-                className="w-16 h-16 rounded-md bg-inset shrink-0"
-              />
+              <div className="w-16 h-16 rounded-md bg-inset shrink-0" />
             )}
             <div className="min-w-0">
               <h1 className="text-xl text-text truncate">{track.title}</h1>

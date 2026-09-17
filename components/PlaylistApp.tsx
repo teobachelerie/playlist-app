@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Track } from "@/lib/playlist";
 import { shuffleAvoidingSameArtist } from "@/lib/shuffle";
-import { withViewTransition } from "@/lib/viewTransition";
 import TrackList from "@/components/TrackList";
 import PlayerSheet from "@/components/PlayerSheet";
 import MiniPlayerBar from "@/components/MiniPlayerBar";
@@ -163,9 +162,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     setCurrentTime(time);
   }
   const seekCb = useCallback(seek, []);
-  const openSheetCb = useCallback(() => {
-    withViewTransition(() => setSheetOpen(true));
-  }, []);
+  const openSheetCb = useCallback(() => setSheetOpen(true), []);
 
   return (
     <div className="h-dvh overflow-hidden relative bg-base">
