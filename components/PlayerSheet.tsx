@@ -70,16 +70,6 @@ export default function PlayerSheet({
   const lastMoveRef = useRef<{ y: number; t: number } | null>(null);
   const velocityRef = useRef(0); // px/ms, positif = vers le bas
   const [airplaySupported, setAirplaySupported] = useState(false);
-  const [animating, setAnimating] = useState(false);
-
-  // Désactive le flou du verre pendant que la feuille bouge (glissement ou
-  // animation d'ouverture/fermeture) — recalculer un flou plein écran à
-  // chaque frame d'un transform, c'est ce qui rendait l'ouverture saccadée.
-  useEffect(() => {
-    setAnimating(true);
-    const t = setTimeout(() => setAnimating(false), 400);
-    return () => clearTimeout(t);
-  }, [open]);
 
   useEffect(() => {
     // Détecté seulement après montage pour éviter un mismatch d'hydratation
@@ -154,9 +144,7 @@ export default function PlayerSheet({
       />
 
       <div
-        className={`dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40 ${
-          dragY !== null || animating ? "dragging" : ""
-        }`}
+        className="dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40"
         style={
           {
             transform,

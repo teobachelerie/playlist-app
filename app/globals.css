@@ -154,7 +154,9 @@ body {
 
 /* Fond du lecteur plein écran : le fond neutre habituel (clair/sombre selon
    le thème), avec juste un lavis léger de la couleur de la pochette en haut
-   — pas un aplat saturé. */
+   — pas un aplat saturé. Version opaque, sans backdrop-filter : le verre
+   dépoli (blur) s'est avéré trop coûteux sur téléphone (ouverture à 5s) et a
+   été retiré — priorité à la fiabilité sur l'effet visuel. */
 @property --color-soft {
   syntax: "<color>";
   inherits: true;
@@ -162,64 +164,15 @@ body {
 }
 
 .dynamic-bg {
-  background: radial-gradient(circle at 30% 0%, var(--color-soft) 0%, transparent 60%),
-    color-mix(in srgb, var(--surface-base) 78%, transparent);
-  backdrop-filter: blur(18px) saturate(1.6);
-  -webkit-backdrop-filter: blur(18px) saturate(1.6);
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
-  position: relative;
-  isolation: isolate;
+  background: radial-gradient(circle at 30% 0%, var(--color-soft) 0%, transparent 60%), var(--surface-base);
   transition:
     --color-soft 0.8s ease,
     background var(--duration-base) var(--ease-standard);
 }
 
-/* Pendant un glissement actif (ouverture/fermeture), on désactive le flou —
-   recalculer un flou sur tout l'écran à chaque frame d'une animation de
-   transform, c'est ce qui rendait l'ouverture saccadée sur téléphone. Le
-   flou ne revient qu'une fois la feuille stabilisée. */
-.dynamic-bg.dragging {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  background: color-mix(in srgb, var(--surface-base) 96%, transparent);
-}
-
-/* Verre dépoli pour la mini-barre — même logique que .dynamic-bg mais sans
-   la teinte couleur (elle reste neutre, discrète). */
 .glass-surface {
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
-  backdrop-filter: blur(16px) saturate(1.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  position: relative;
-  isolation: isolate;
-}
-
-/* Reflet spéculaire — c'est ce qui distingue un vrai effet "verre" d'un
-   simple flou : une lueur diagonale qui suggère de la lumière qui glisse
-   sur une surface courbe, comme le Liquid Glass d'iOS. Pas de mix-blend-mode
-   ici (coûteux à composer sur mobile, surtout combiné au backdrop-filter) —
-   juste un dégradé blanc à faible opacité, moins précis mais bien moins cher. */
-.dynamic-bg::before,
-.glass-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0.05) 18%,
-    rgba(255, 255, 255, 0) 32%,
-    rgba(255, 255, 255, 0) 78%,
-    rgba(255, 255, 255, 0.06) 100%
-  );
-}
-.dynamic-bg > *,
-.glass-surface > * {
-  position: relative;
-  z-index: 1;
+  background: var(--surface-raised);
+  box-shadow: var(--elev-raised);
 }
 
 /* Élévations néomorphiques "sur couleur" — utilisent la teinte du titre en
