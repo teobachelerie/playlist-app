@@ -166,7 +166,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
 
   return (
     <div className="h-dvh overflow-hidden relative bg-base">
-      <div className="h-full overflow-y-auto">
+      <div className="h-full">
         <TrackList tracks={tracks} currentId={current?.id ?? null} onSelect={selectTrackCb} />
       </div>
 
