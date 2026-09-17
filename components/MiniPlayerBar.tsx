@@ -20,7 +20,7 @@ function MiniPlayerBar({
     <button
       onClick={onOpen}
       style={{ "--color-soft": track.colorSoft } as CSSProperties}
-      className="press-tactile mini-tint fixed inset-x-4 bottom-4 z-40 flex items-center gap-2.5 pl-2 pr-2 py-2 rounded-full shadow-raised text-left"
+      className="press-tactile mini-tint fixed inset-x-8 bottom-4 z-40 flex items-center gap-2.5 pl-2 pr-2 py-2 rounded-full shadow-raised text-left"
     >
       {track.coverUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
