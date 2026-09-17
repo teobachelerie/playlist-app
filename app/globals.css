@@ -163,10 +163,12 @@ body {
 
 .dynamic-bg {
   background: radial-gradient(circle at 30% 0%, var(--color-soft) 0%, transparent 60%),
-    color-mix(in srgb, var(--surface-base) 82%, transparent);
-  backdrop-filter: blur(30px) saturate(1.7);
-  -webkit-backdrop-filter: blur(30px) saturate(1.7);
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+    color-mix(in srgb, var(--surface-base) 78%, transparent);
+  backdrop-filter: blur(34px) saturate(1.9);
+  -webkit-backdrop-filter: blur(34px) saturate(1.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  position: relative;
+  isolation: isolate;
   transition:
     --color-soft 0.8s ease,
     background var(--duration-base) var(--ease-standard);
@@ -175,10 +177,39 @@ body {
 /* Verre dépoli pour la mini-barre — même logique que .dynamic-bg mais sans
    la teinte couleur (elle reste neutre, discrète). */
 .glass-surface {
-  background: color-mix(in srgb, var(--surface-raised) 78%, transparent);
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  backdrop-filter: blur(26px) saturate(1.8);
+  -webkit-backdrop-filter: blur(26px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Reflet spéculaire — c'est ce qui distingue un vrai effet "verre" d'un
+   simple flou : une lueur diagonale qui suggère de la lumière qui glisse
+   sur une surface courbe, comme le Liquid Glass d'iOS. Appliqué en pseudo-
+   élément pour ne jamais interférer avec le contenu (clics, texte, etc). */
+.dynamic-bg::before,
+.glass-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.08) 18%,
+    rgba(255, 255, 255, 0) 32%,
+    rgba(255, 255, 255, 0) 78%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  mix-blend-mode: overlay;
+}
+.dynamic-bg > *,
+.glass-surface > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* View Transitions : on désactive le fondu par défaut de toute la page

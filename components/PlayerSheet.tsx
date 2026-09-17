@@ -4,8 +4,8 @@ import { Fragment, useEffect, useRef, useState, type RefObject } from "react";
 import {
   Play,
   Pause,
-  ChevronsLeft,
-  ChevronsRight,
+  SkipBack,
+  SkipForward,
   Shuffle,
   Repeat,
   Airplay,
@@ -250,7 +250,7 @@ export default function PlayerSheet({
               className="text-text hover:opacity-70"
               aria-label="Titre précédent"
             >
-              <ChevronsLeft size={32} fill="currentColor" />
+              <SkipBack size={30} fill="currentColor" />
             </button>
             <button
               onClick={onTogglePlay}
@@ -260,7 +260,7 @@ export default function PlayerSheet({
               {isPlaying ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" />}
             </button>
             <button onClick={onNext} className="text-text hover:opacity-70" aria-label="Titre suivant">
-              <ChevronsRight size={32} fill="currentColor" />
+              <SkipForward size={30} fill="currentColor" />
             </button>
             <button
               onClick={onToggleRepeat}

@@ -18,7 +18,7 @@ function MiniPlayerBar({
   return (
     <button
       onClick={onOpen}
-      className="press-tactile glass-surface fixed inset-x-3 bottom-3 z-40 flex items-center gap-3 px-3 py-2 rounded-xl text-left"
+      className="press-tactile glass-surface fixed inset-x-3 bottom-3 z-40 flex items-center gap-3 px-3.5 py-3 rounded-xl text-left"
     >
       {track.coverUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -26,10 +26,10 @@ function MiniPlayerBar({
           src={track.coverUrl}
           alt=""
           style={{ viewTransitionName: "track-cover" }}
-          className="w-10 h-10 rounded-sm object-cover shrink-0"
+          className="w-12 h-12 rounded-sm object-cover shrink-0"
         />
       ) : (
-        <div style={{ viewTransitionName: "track-cover" }} className="w-10 h-10 rounded-sm bg-inset shrink-0" />
+        <div style={{ viewTransitionName: "track-cover" }} className="w-12 h-12 rounded-sm bg-inset shrink-0" />
       )}
       <span className="min-w-0 flex-1">
         <span className="block truncate text-body text-text">{track.title}</span>
@@ -40,9 +40,9 @@ function MiniPlayerBar({
           e.stopPropagation();
           onTogglePlay();
         }}
-        className="press-tactile w-9 h-9 rounded-full bg-highlight shadow-raised-sm flex items-center justify-center text-text"
+        className="press-tactile w-10 h-10 rounded-full bg-highlight shadow-raised-sm flex items-center justify-center text-text"
       >
-        {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
+        {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
       </span>
     </button>
   );
