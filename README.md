@@ -1,26 +1,20 @@
 # Playlist
 
-Lecteur web mono-playlist : une liste de titres, un lecteur, les paroles synchronisées. Pas de recherche, pas de bibliothèque, pas de shuffle.
+Lecteur web mono-playlist perso : une liste de titres, un lecteur compact en bas d'écran (lecture, précédent/suivant, progression, aléatoire/répéter, file d'attente). Pas de recherche, pas de bibliothèque, pas de paroles.
 
-## Pré-requis sur ta machine (pour le script d'ajout de titre)
+## Pré-requis sur ta machine (pour ajouter des titres)
 
 ```bash
 brew install yt-dlp ffmpeg
-python3 -m venv .venv
-.venv/bin/pip install -r scripts/requirements.txt
 ```
 
-Le script détecte automatiquement `.venv` et l'utilise pour Whisper/WhisperX — pas besoin d'activer l'environnement virtuel avant de lancer `npm run add-track`.
-
-**WhisperX** (alignement forcé du texte officiel sur l'audio) a été testé mais abandonné — conflit de version (`ctranslate2`) sur Python 3.14/Mac ARM. Le code de repli reste en place dans `add-track.mjs`/`align_words_forced.py` si tu veux réessayer un jour avec un environnement Python plus ancien, mais `whisperx` n'est plus dans `requirements.txt` par défaut.
-
-La première fois que tu ajoutes un titre, `faster-whisper` télécharge son modèle (~500 Mo, modèle "small") — ça prend un peu de temps mais **une seule fois pour toujours**, il est ensuite mis en cache sur ta machine et réutilisé pour tous les titres suivants. Le calcul d'alignement lui-même (10-30s par titre) tourne une fois par titre, à l'ajout — jamais à la lecture.
+Plus besoin de Python/Whisper — l'app n'affiche plus de paroles, donc plus d'étape d'alignement à l'ajout. Les fichiers `scripts/align_words.py`, `scripts/align_words_forced.py` et `scripts/requirements.txt` restent dans le repo mais ne sont plus utilisés.
 
 ## ⚠️ Comment appliquer une mise à jour sans perdre tes données
 
-À partir de maintenant, mes zips ne contiennent **jamais** `data/manifest.json` ni le contenu de `public/audio`, `public/lyrics`, `public/covers` — seulement le code (composants, scripts, config). Tu peux dézipper par-dessus ton dossier existant sans risque : ta playlist et tes fichiers restent intacts.
+Mes zips ne contiennent **jamais** `data/manifest.json` ni le contenu de `public/audio`, `public/covers` — seulement le code (composants, scripts, config). Tu peux dézipper par-dessus ton dossier existant sans risque : ta playlist et tes fichiers restent intacts.
 
-Si jamais tu repars d'un dossier neuf (pas de `data/manifest.json` du tout) : copie `data/manifest.example.json` vers `data/manifest.json` avant de lancer `npm run add-track`.
+Si jamais tu repars d'un dossier neuf (pas de `data/manifest.json` du tout) : copie `data/manifest.example.json` vers `data/manifest.json` avant d'ajouter un titre.
 
 ## 1. Installation
 
@@ -28,18 +22,32 @@ Si jamais tu repars d'un dossier neuf (pas de `data/manifest.json` du tout) : co
 npm install
 ```
 
-## 2. Ajouter un titre
+## 2. Ajouter des titres
 
-Tant que `BLOB_READ_WRITE_TOKEN` n'est pas défini, le script copie les fichiers dans `public/` — parfait pour tester en local.
+**Le plus simple — mode interactif**, pas besoin de revenir en discuter à chaque fois :
+```bash
+npm run studio
+```
+Colle un lien YouTube, le titre est détecté automatiquement (tu confirmes ou corriges), ça boucle pour le titre suivant. Ctrl+C pour arrêter.
 
+**Ou un par un, en une commande** :
 ```bash
 npm run add-track -- "https://youtube.com/watch?v=XXXX" "Titre du morceau" "Nom de l'artiste"
 ```
 
-**Ou sans lien** : donne juste le titre et l'artiste comme premier argument (pas d'URL), yt-dlp cherche lui-même sur YouTube et prend le premier résultat :
+**Ou par recherche** (pas de lien, yt-dlp cherche lui-même sur YouTube et prend le premier résultat) :
 ```bash
 npm run add-track -- "Titre Artiste" "Titre du morceau" "Nom de l'artiste"
 ```
+
+Tant que `BLOB_READ_WRITE_TOKEN` n'est pas défini, les fichiers sont copiés dans `public/` — parfait pour tester en local.
+
+Le script :
+1. extrait l'audio en mp3 (~128kbps) et la miniature YouTube avec yt-dlp,
+2. normalise le volume à -18 LUFS (plus proche d'Apple Music que les -14 LUFS d'avant),
+3. cherche la pochette d'album sur iTunes (repli sur la miniature YouTube si rien trouvé),
+4. extrait les couleurs dominantes de la pochette pour la légère teinte du lecteur,
+5. ajoute le titre dans `data/manifest.json`.
 
 ## 3. Supprimer un titre
 
@@ -47,19 +55,7 @@ npm run add-track -- "Titre Artiste" "Titre du morceau" "Nom de l'artiste"
 npm run remove-track -- "Titre ou artiste"
 ```
 
-Recherche insensible à la casse sur le titre et l'artiste. Si plusieurs titres correspondent, le script les liste sans rien supprimer — relance avec une recherche plus précise. Supprime aussi les fichiers locaux associés (mp3, lrc, words.json, cover) si le titre est en mode local ; si le titre a été uploadé sur Blob, ces fichiers restent sur Vercel et doivent être supprimés manuellement depuis le dashboard (Storage → Blob) si tu veux libérer l'espace.
-
-Le script :
-1. extrait l'audio en mp3 (~128kbps) et la miniature YouTube avec yt-dlp,
-2. normalise le volume à -14 LUFS (niveau standard streaming) pour une intensité sonore cohérente entre les titres,
-3. cherche les paroles synchronisées sur lrclib.net,
-4. si rien n'est trouvé, essaie les sous-titres YouTube de la vidéo (qualité variable selon la vidéo — voir le commentaire dans `scripts/lib/vttToLrc.mjs`),
-5. si des paroles ont été trouvées, aligne les mots avec Whisper pour l'animation mot par mot (voir `scripts/lib/alignWords.mjs` pour le détail de la méthode et ses limites),
-6. cherche la pochette d'album sur iTunes (repli sur la miniature YouTube si rien trouvé),
-7. extrait les couleurs dominantes de la pochette (assombries, + variantes claire/foncée pour les reliefs néomorphiques du lecteur) pour le fond dynamique de l'app,
-8. ajoute le titre dans `data/manifest.json`.
-
-Recommencer la commande pour chacun de tes 108 titres actuels, puis 1-2 fois par mois pour les nouveaux.
+Recherche insensible à la casse sur le titre et l'artiste. Si plusieurs titres correspondent, le script les liste sans rien supprimer — relance avec une recherche plus précise. Supprime aussi les fichiers locaux associés si le titre est en mode local ; si le titre a été uploadé sur Blob, ces fichiers restent sur Vercel et doivent être supprimés manuellement depuis le dashboard (Storage → Blob) si tu veux libérer l'espace.
 
 ## 4. Lancer en local
 
@@ -78,9 +74,7 @@ npm run dev
 BLOB_READ_WRITE_TOKEN=le_token_copié_depuis_vercel
 ```
 
-**c) Ré-uploade tes titres existants sur Blob** en relançant `npm run add-track -- ...` pour chacun (le script détecte le token et bascule automatiquement sur l'upload Blob au lieu de la copie locale). Si tu préfères ne pas re-télécharger depuis YouTube, tu peux aussi écrire un petit script d'upload direct à partir des fichiers déjà présents dans `public/audio` — dis-le-moi si tu veux que je l'ajoute.
-
-**d) Déployer** :
+**c) Déployer** :
 ```bash
 git init
 git add .
@@ -89,15 +83,12 @@ git push
 ```
 Puis import du repo dans Vercel (une fois), en ajoutant `BLOB_READ_WRITE_TOKEN` dans les variables d'environnement du projet Vercel (Settings → Environment Variables) — sinon les fonctions serveur de production n'auront pas accès au token.
 
-Ensuite, à chaque nouveau titre : `npm run add-track -- ...` en local (avec le token dans `.env.local`) puis `git add . && git commit -m "..." && git push`. Le manifest se met à jour, le déploiement se redéclenche automatiquement.
+Ensuite, à chaque nouveau titre : `npm run studio` (ou `add-track`) en local avec le token chargé (`export $(cat .env.local | xargs)`), puis `git add . && git commit -m "..." && git push`. Le manifest se met à jour, le déploiement se redéclenche automatiquement.
 
 ## Limites connues
 
-- Le stockage Blob gratuit (Hobby) est de 1 Go, **partagé avec tes autres projets Vercel**. Vérifie l'usage actuel de Cap Finances avant de migrer tes 108 titres (~400-500 Mo estimés à 128kbps).
-- Les paroles récupérées via les sous-titres YouTube (fallback) peuvent être imprécises ou absentes selon le type de vidéo — voir le commentaire dans `scripts/lib/vttToLrc.mjs`.
-- Le timing mot par mot est une approximation : Whisper donne des instants de prononciation réels, mais le texte affiché reste celui de lrclib (fiable), donc le mapping entre les deux n'est pas toujours parfait (mots regroupés si Whisper en loupe, retour au linéaire si Whisper ne détecte rien sur une ligne). Voir `scripts/lib/alignWords.mjs`.
-- Le fond dynamique reprend la logique d'Apple Music (couleur dominante de la pochette, assombrie pour rester lisible) mais reste une approximation simple (pixel le plus saturé + moyenne de l'image) — pas l'algorithme exact d'Apple.
-- Design néomorphique appliqué (tokens Cap Finances) : mode clair/sombre manuel (bouton dans l'en-tête, persisté dans `localStorage`), playlist en surfaces neutres, lecteur plein écran en relief teinté par la couleur de la pochette (`colorLight`/`colorDark`, calculés à l'ingestion).
-- Les titres ajoutés avant cette mise à jour n'ont pas `colorLight`/`colorDark` dans le manifest — repli neutre automatique en attendant une ré-ingestion.
-- Le geste de glissement de la feuille (lecteur) est une translation simple avec seuil de bascule à 30% de l'écran — pas de physique d'inertie façon iOS natif.
+- Le stockage Blob gratuit (Hobby) est de 1 Go, **partagé avec tes autres projets Vercel**.
+- Le fond du lecteur reprend la logique d'Apple Music (couleur dominante de la pochette, assombrie pour rester lisible) mais reste une approximation simple (pixel le plus saturé + moyenne de l'image) — pas l'algorithme exact d'Apple.
+- Design néomorphique (tokens Cap Finances) : mode clair/sombre manuel (bouton dans l'en-tête, persisté dans `localStorage`).
+- Pas de paroles — retiré à la demande (prenait trop de place, peu utilisé). Les fichiers `lib/lrc.ts`, `components/Lyrics.tsx`, `components/PlayerSheet.tsx` restent dans le repo mais ne sont plus utilisés par l'app ; `lyricsUrl`/`wordsUrl` restent dans le manifest (toujours `null` pour les nouveaux titres) pour ne pas casser les titres existants.
 - Le bouton de sortie audio (icône cast) n'apparaît que dans Safari (iOS/Mac) — c'est une API spécifique à WebKit, absente de Chrome/Firefox.

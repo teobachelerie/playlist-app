@@ -4,8 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Track } from "@/lib/playlist";
 import { shuffleAvoidingSameArtist } from "@/lib/shuffle";
 import TrackList from "@/components/TrackList";
-import PlayerSheet from "@/components/PlayerSheet";
-import MiniPlayerBar from "@/components/MiniPlayerBar";
+import CompactPlayer from "@/components/CompactPlayer";
 
 export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const [order, setOrder] = useState<Track[]>(tracks);
@@ -17,10 +16,14 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const [playbackError, setPlaybackError] = useState(false);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [airplaySupported, setAirplaySupported] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const current = hasSelected ? order[position] ?? null : null;
+
+  useEffect(() => {
+    setAirplaySupported("webkitShowPlaybackTargetPicker" in HTMLMediaElement.prototype);
+  }, []);
 
   useEffect(() => {
     setPlaybackError(false);
@@ -137,7 +140,6 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     setPosition(idx);
     setHasSelected(true);
     setIsPlaying(true);
-    setSheetOpen(true);
   }
   const selectTrackCb = useCallback(selectTrack, [order]);
 
@@ -162,7 +164,11 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     setCurrentTime(time);
   }
   const seekCb = useCallback(seek, []);
-  const openSheetCb = useCallback(() => setSheetOpen(true), []);
+
+  function handleAirplay() {
+    const el = audioRef.current as HTMLAudioElement & { webkitShowPlaybackTargetPicker?: () => void };
+    el?.webkitShowPlaybackTargetPicker?.();
+  }
 
   return (
     <div className="h-dvh overflow-hidden relative bg-base">
@@ -170,17 +176,8 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
         <TrackList tracks={tracks} currentId={current?.id ?? null} onSelect={selectTrackCb} />
       </div>
 
-      {current && !sheetOpen && (
-        <MiniPlayerBar
-          track={current}
-          isPlaying={isPlaying}
-          onTogglePlay={togglePlayCb}
-          onOpen={openSheetCb}
-        />
-      )}
-
       {current && (
-        <PlayerSheet
+        <CompactPlayer
           track={current}
           queue={order.slice(position + 1)}
           isPlaying={isPlaying}
@@ -189,8 +186,6 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           playbackError={playbackError}
           shuffle={shuffle}
           repeat={repeat}
-          open={sheetOpen}
-          onOpenChange={setSheetOpen}
           onTogglePlay={togglePlayCb}
           onNext={playNext}
           onPrevious={playPrevious}
@@ -198,7 +193,8 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           onToggleRepeat={() => setRepeat(!repeat)}
           onSeek={seekCb}
           onSelectFromQueue={selectTrackCb}
-          audioRef={audioRef}
+          airplaySupported={airplaySupported}
+          onAirplay={handleAirplay}
         />
       )}
 

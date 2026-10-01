@@ -39,7 +39,7 @@ function TrackList({
               "linear-gradient(to bottom, transparent, black 16px, black calc(100% - 24px), transparent)",
           }}
         >
-          <ul className="px-2 pt-2 pb-28">
+          <ul className="px-2 pt-2 pb-44">
             {tracks.map((track) => {
               const active = track.id === currentId;
               return (
