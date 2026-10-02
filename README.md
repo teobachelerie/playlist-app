@@ -24,11 +24,13 @@ npm install
 
 ## 2. Ajouter des titres
 
-**Le plus simple — mode interactif**, pas besoin de revenir en discuter à chaque fois :
+**Depuis le site lui-même** : bouton "+" en haut à côté de "Playlist" — colle un lien, un titre et un artiste. Ça n'ajoute pas le titre tout de suite (télécharger/convertir l'audio n'est pas quelque chose que le site peut faire lui-même, de façon fiable) : ça enregistre juste la demande dans une file d'attente, traitée automatiquement la prochaine fois que tu lances `npm run studio` sur ton Mac.
+
+**En local — mode interactif**, pas besoin de revenir en discuter à chaque fois :
 ```bash
 npm run studio
 ```
-Colle un lien YouTube, le titre est détecté automatiquement (tu confirmes ou corriges), ça boucle pour le titre suivant. Ctrl+C pour arrêter.
+Traite d'abord tout ce qui a été demandé depuis l'app (file d'attente), puis colle un lien YouTube directement ici — le titre est détecté automatiquement (tu confirmes ou corriges), ça boucle pour le titre suivant. Ctrl+C pour arrêter.
 
 **Ou un par un, en une commande** :
 ```bash

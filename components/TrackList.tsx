@@ -3,6 +3,7 @@
 import { memo } from "react";
 import type { Track } from "@/lib/playlist";
 import ThemeToggle from "@/components/ThemeToggle";
+import AddTrackButton from "@/components/AddTrackButton";
 
 function TrackList({
   tracks,
@@ -20,7 +21,10 @@ function TrackList({
         style={{ paddingLeft: "var(--gutter-screen)", paddingRight: "var(--gutter-screen)" }}
       >
         <h1 className="text-title-1 font-semibold text-text">Playlist</h1>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <AddTrackButton />
+          <ThemeToggle />
+        </div>
       </div>
 
       {tracks.length === 0 ? (

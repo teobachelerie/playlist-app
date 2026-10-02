@@ -169,7 +169,6 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
       {current && (
         <CompactPlayer
           track={current}
-          queue={order.slice(position + 1)}
           isPlaying={isPlaying}
           currentTime={currentTime}
           duration={duration}
@@ -182,7 +181,6 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           onToggleShuffle={toggleShuffle}
           onToggleRepeat={() => setRepeat(!repeat)}
           onSeek={seekCb}
-          onSelectFromQueue={selectTrackCb}
           airplaySupported={airplaySupported}
           onAirplay={handleAirplay}
         />

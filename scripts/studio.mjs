@@ -13,6 +13,48 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 
+const QUEUE_PATH = "queue/pending.json";
+
+// Traite les titres demandés depuis l'app (bouton "+" sur le site) avant de
+// passer en mode interactif — nécessite BLOB_READ_WRITE_TOKEN (même que pour
+// add-track). Si le token n'est pas chargé, ou si la file est vide, on passe
+// directement à la suite sans bloquer.
+async function processRemoteQueue() {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    console.log("(BLOB_READ_WRITE_TOKEN non chargé — file d'attente distante ignorée)\n");
+    return;
+  }
+
+  const { list, put } = await import("@vercel/blob");
+  const { blobs } = await list({ prefix: QUEUE_PATH, token });
+  // On prend toujours le fichier le plus récent plutôt que d'écraser un
+  // chemin fixe — évite de dépendre d'une option d'écrasement dont la
+  // disponibilité varie selon la version du SDK.
+  const latest = blobs.sort(
+    (a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+  )[0];
+  if (!latest) return;
+
+  const res = await fetch(latest.url);
+  const pending = res.ok ? await res.json() : [];
+  if (pending.length === 0) return;
+
+  console.log(`📥 ${pending.length} titre(s) en attente depuis l'app :\n`);
+  for (const { url, title, artist } of pending) {
+    console.log(`→→→ ${title} — ${artist}`);
+    await runAddTrack(url, title, artist);
+    console.log("");
+  }
+
+  await put(QUEUE_PATH, "[]", {
+    access: "public",
+    contentType: "application/json",
+    token,
+  });
+  console.log("---\n");
+}
+
 async function getYoutubeTitle(url) {
   try {
     const { stdout } = await execFileAsync("yt-dlp", ["--get-title", url], {
@@ -46,6 +88,8 @@ function runAddTrack(url, title, artist) {
 
 async function main() {
   console.log("🎵 Ajout rapide de titres — Ctrl+C pour arrêter à tout moment.\n");
+
+  await processRemoteQueue();
 
   while (true) {
     const url = (await rl.question("Lien YouTube : ")).trim();

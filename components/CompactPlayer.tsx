@@ -1,18 +1,8 @@
 "use client";
 
-import { memo, useState, type CSSProperties } from "react";
-import {
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Shuffle,
-  Repeat,
-  Airplay,
-  ListMusic,
-} from "lucide-react";
+import { memo, type CSSProperties } from "react";
+import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Airplay } from "lucide-react";
 import type { Track } from "@/lib/playlist";
-import Queue from "@/components/Queue";
 
 function formatTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -23,7 +13,6 @@ function formatTime(seconds: number): string {
 
 function CompactPlayer({
   track,
-  queue,
   isPlaying,
   currentTime,
   duration,
@@ -36,12 +25,10 @@ function CompactPlayer({
   onToggleShuffle,
   onToggleRepeat,
   onSeek,
-  onSelectFromQueue,
   airplaySupported,
   onAirplay,
 }: {
   track: Track;
-  queue: Track[];
   isPlaying: boolean;
   currentTime: number;
   duration: number;
@@ -54,31 +41,20 @@ function CompactPlayer({
   onToggleShuffle: () => void;
   onToggleRepeat: () => void;
   onSeek: (time: number) => void;
-  onSelectFromQueue: (id: string) => void;
   airplaySupported: boolean;
   onAirplay: () => void;
 }) {
-  const [showQueue, setShowQueue] = useState(false);
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="fixed inset-x-3 bottom-5 z-40">
-      {showQueue && (
-        <div className="mb-2 bg-surface shadow-raised-lg rounded-xl p-3 max-h-64">
-          <Queue tracks={queue} onSelect={onSelectFromQueue} />
-        </div>
-      )}
-
-      <div
-        style={{ "--color-soft": track.colorSoft } as CSSProperties}
-        className="mini-tint shadow-raised rounded-xl px-4 pt-3 pb-2.5"
-      >
+      <div className="bg-highlight shadow-raised-lg rounded-[32px] px-5 pt-4 pb-3">
         <div className="flex items-center gap-3">
           {track.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={track.coverUrl} alt="" className="w-11 h-11 rounded-sm object-cover shrink-0" />
+            <img src={track.coverUrl} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
           ) : (
-            <div className="w-11 h-11 rounded-sm bg-inset shrink-0" />
+            <div className="w-12 h-12 rounded-xl bg-inset shrink-0" />
           )}
           <span className="min-w-0 flex-1">
             <span className="block truncate text-body text-text leading-tight">{track.title}</span>
@@ -86,13 +62,6 @@ function CompactPlayer({
               {playbackError ? "Lecture impossible — passe au suivant" : track.artist}
             </span>
           </span>
-          <button
-            onClick={() => setShowQueue((v) => !v)}
-            className={`p-2 shrink-0 ${showQueue ? "text-text" : "text-tertiary"}`}
-            aria-label="File d'attente"
-          >
-            <ListMusic size={20} />
-          </button>
           {airplaySupported && (
             <button onClick={onAirplay} className="p-2 shrink-0 text-tertiary" aria-label="Sortie audio">
               <Airplay size={20} />
@@ -100,7 +69,7 @@ function CompactPlayer({
           )}
         </div>
 
-        <div className="mt-2 space-y-0.5">
+        <div className="mt-3 space-y-0.5">
           <input
             type="range"
             min={0}
@@ -118,7 +87,7 @@ function CompactPlayer({
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-7 mt-1">
+        <div className="flex items-center justify-center gap-7 mt-2">
           <button
             onClick={onToggleShuffle}
             className={shuffle ? "text-text" : "text-tertiary hover:text-muted"}
@@ -131,7 +100,7 @@ function CompactPlayer({
           </button>
           <button
             onClick={onTogglePlay}
-            className="press-tactile w-11 h-11 rounded-full bg-highlight shadow-raised-sm flex items-center justify-center text-text"
+            className="press-tactile w-11 h-11 rounded-full bg-surface shadow-raised-sm flex items-center justify-center text-text"
             aria-label={isPlaying ? "Pause" : "Lecture"}
           >
             {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
