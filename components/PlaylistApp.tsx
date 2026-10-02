@@ -31,11 +31,14 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
 
   useEffect(() => {
     if (isPlaying) {
-      setPlaybackError(false);
+      // On ne force plus l'état ici à partir de la promesse de play() : elle
+      // peut parfois être rejetée (AbortError) par le navigateur alors que
+      // la lecture démarre quand même juste après — ça désynchronisait notre
+      // affichage (figé, "lecture impossible") alors que le son jouait
+      // vraiment. Les événements natifs onPlay/onPause de l'élément <audio>
+      // (plus bas) sont maintenant la seule source de vérité pour isPlaying.
       audioRef.current?.play().catch((err) => {
-        console.error("Lecture impossible :", err);
-        setIsPlaying(false);
-        setPlaybackError(true);
+        console.error("play() rejeté (peut être transitoire) :", err);
       });
     }
   }, [position, isPlaying]);
@@ -69,14 +72,10 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
     navigator.mediaSession.setActionHandler("nexttrack", playNext);
     navigator.mediaSession.setActionHandler("play", () => {
-      audioRef.current
-        ?.play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
+      audioRef.current?.play().catch((err) => console.error("play() rejeté :", err));
     });
     navigator.mediaSession.setActionHandler("pause", () => {
       audioRef.current?.pause();
-      setIsPlaying(false);
     });
     // Neutralise les boutons de saut ±10s pour ne laisser que précédent/suivant.
     navigator.mediaSession.setActionHandler("seekforward", null);
@@ -93,21 +92,12 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.pause();
-      setIsPlaying(false);
       return;
     }
-    setPlaybackError(false);
-    audioRef.current
-      .play()
-      .then(() => setIsPlaying(true))
-      .catch((err) => {
-        // Ne pas afficher "en lecture" si ça a réellement échoué (fichier
-        // cassé, etc.) — avant, l'état passait à "lecture" quoi qu'il arrive,
-        // ce qui donnait l'impression que ça restait bloqué à zéro.
-        console.error("Lecture impossible :", err);
-        setIsPlaying(false);
-        setPlaybackError(true);
-      });
+    // isPlaying/playbackError sont mis à jour par les événements natifs
+    // onPlay/onPause/onError de l'élément <audio>, pas ici directement —
+    // c'est la seule source fiable (voir commentaire plus bas).
+    audioRef.current.play().catch((err) => console.error("play() rejeté :", err));
   }
   const togglePlayCb = useCallback(togglePlay, [isPlaying]);
 
@@ -204,6 +194,11 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           src={current.audioUrl}
           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
           onEnded={playNext}
+          onPlay={() => {
+            setIsPlaying(true);
+            setPlaybackError(false);
+          }}
+          onPause={() => setIsPlaying(false)}
           onError={() => {
             console.error("Erreur de chargement audio pour :", current.title, current.audioUrl);
             setPlaybackError(true);

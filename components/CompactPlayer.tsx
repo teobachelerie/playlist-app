@@ -62,7 +62,7 @@ function CompactPlayer({
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-40">
+    <div className="fixed inset-x-3 bottom-5 z-40">
       {showQueue && (
         <div className="mb-2 bg-surface shadow-raised-lg rounded-xl p-3 max-h-64">
           <Queue tracks={queue} onSelect={onSelectFromQueue} />
