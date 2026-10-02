@@ -51,8 +51,8 @@ export default function AddTrackButton() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-scrim">
-          <div className="w-full max-w-md bg-base rounded-t-2xl p-6 pb-10 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-4">
+          <div className="w-full max-w-sm bg-base rounded-2xl p-6 space-y-4 shadow-raised-lg">
             <div className="flex items-center justify-between">
               <h2 className="text-title-3 font-semibold text-text">Ajouter un titre</h2>
               <button
