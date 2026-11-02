@@ -3,64 +3,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* D.A Finelio — papier et encre. Voir docs/DA.md.
+   Toutes les valeurs passent par ces tokens ; aucun hex dans les composants. */
 :root {
-  /* Neutres bruts */
-  --white: #ffffff;
-  --off-white: #f2f2f7;
-  --grey-1: #e8e8ed;
-  --grey-2: #d8d8de;
-  --grey-3: #c7c7cc;
-  --grey-4: #8e8e93;
-  --grey-5: #48484a;
-  --black: #000000;
-
   /* Surfaces */
-  --surface-base: #f2f2f7;
-  --surface-raised: #f2f2f7;
-  --surface-highlight: #ffffff;
-  --surface-inset: #f2f2f7;
-  --surface-scrim: rgba(0, 0, 0, 0.18);
-  --surface-danger: #ffebea;
+  --surface-0: #e9e6e2; /* fond de l'app */
+  --surface-1: #f2efea; /* papier : cartes, feuilles */
+  --surface-2: #e3dfd9; /* papier enfoncé : état choisi, champ lecture seule */
+  --border-token: #dad5ce;
+  --surface-scrim: rgba(43, 39, 36, 0.38);
+  --surface-glass: rgba(242, 239, 234, 0.84);
 
-  /* Texte / icônes */
-  --text-primary: #000000;
-  --text-secondary: #48484a;
-  --text-tertiary: #8e8e93;
-  --text-inverse: #ffffff;
-  --text-expense: #ff3b30;
-  --text-income: #34c759;
-  --icon-primary: #000000;
-  --icon-secondary: #8e8e93;
-  --separator: rgba(0, 0, 0, 0.06);
-  --hairline: rgba(0, 0, 0, 0.1);
+  /* Encre et gris chauds */
+  --ink: #2b2724;
+  --ink-inverse: #f2efea; /* texte sur pilule encre */
+  --text-secondary: #5a534d;
+  --ink-muted: #8c8580;
 
-  /* Accent */
-  --accent-bg: #000000;
-  --accent-text: #ffffff;
-  --red: #ff3b30;
-  --green: #34c759;
+  /* Accent : orange, jamais en fond plein */
+  --accent-orange-bright: #ee7b26;
+  --accent-orange: #b8541f; /* texte orange sur papier */
+  --grad-signature: linear-gradient(180deg, #ee7b26 0%, #b8541f 100%);
+  --on-orange: #14100c;
 
-  /* Sources lumineuses néomorphiques */
-  --light-source: rgba(255, 255, 255, 0.9);
-  --light-source-strong: rgba(255, 255, 255, 1);
-  --dark-source: rgba(0, 0, 0, 0.1);
-  --dark-source-strong: rgba(0, 0, 0, 0.16);
+  /* Rouge : erreurs et suppressions uniquement */
+  --red: #c8372d;
+  --surface-danger: rgba(200, 55, 45, 0.1);
+
+  /* Alias historiques de l'app (redirigés vers les tokens D.A) */
+  --surface-base: var(--surface-0);
+  --surface-raised: var(--surface-1);
+  --surface-highlight: var(--surface-1);
+  --surface-inset: var(--surface-2);
+  --text-primary: var(--ink);
+  --text-tertiary: var(--ink-muted);
+  --text-inverse: var(--ink-inverse);
+  --separator: var(--border-token);
+  --hairline: var(--border-token);
+  --accent-bg: var(--ink);
+  --accent-text: var(--ink-inverse);
 
   /* Typo */
-  --font-core: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
-  --font-numeric: var(--font-display);
+  --font-core: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --font-display: var(--font-core);
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-numeric: var(--font-core);
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 700;
-  --leading-tight: 1.06;
+  --weight-black: 900;
+  --leading-tight: 1.05;
   --leading-snug: 1.22;
   --leading-normal: 1.4;
   --leading-relaxed: 1.5;
-  --tracking-balance: -0.03em;
-  --tracking-display: -0.026em;
-  --tracking-title: -0.02em;
+  --tracking-display: -0.035em;
+  --tracking-title: -0.035em;
+  --tracking-serif: -0.01em;
   --tracking-body: -0.01em;
   --tracking-caption: 0em;
 
@@ -70,53 +69,59 @@
   --gap-section: 32px;
   --hit-min: 44px;
 
-  /* Élévations néomorphiques */
-  --elev-flat: none;
-  --elev-raised-sm: 3px 3px 8px var(--dark-source), -3px -3px 8px var(--light-source);
-  --elev-raised: 6px 6px 14px var(--dark-source), -5px -5px 12px var(--light-source);
-  --elev-raised-lg: 10px 10px 22px var(--dark-source-strong), -8px -8px 18px var(--light-source-strong);
-  --elev-inset-sm: inset 2px 2px 5px var(--dark-source), inset -2px -2px 5px var(--light-source);
-  --elev-inset: inset 4px 4px 10px var(--dark-source), inset -3px -3px 8px var(--light-source);
-  --elev-press: inset 3px 3px 7px var(--dark-source), inset -2px -2px 6px var(--light-source);
-  --elev-overlay: 0 -2px 24px rgba(0, 0, 0, 0.1), 0 -12px 48px rgba(0, 0, 0, 0.06);
+  /* Rayons */
+  --radius-sm: 12px;
+  --radius-field: 14px;
+  --radius-card: 20px;
+  --radius-sheet: 28px;
+  --radius-pill: 999px;
 
-  /* Animations */
+  /* Élévation : bordure fine. Une seule ombre douce, pour les éléments flottants. */
+  --elev-flat: none;
+  --elev-border: 0 0 0 1px var(--border-token);
+  --elev-border-inset: inset 0 0 0 1px var(--border-token);
+  --elev-overlay: 0 -2px 24px rgba(43, 39, 36, 0.08);
+
+  /* Mouvement */
   --duration-micro: 150ms;
   --duration-base: 200ms;
   --duration-slow: 250ms;
+  --duration-stack: 280ms;
   --ease-standard: cubic-bezier(0.33, 0, 0.15, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --press-scale: 0.985;
+  --ease-stack: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --press-scale: 0.97;
+  --press-opacity: 0.55;
+
+  /* Transitoire (lot 3) : anciens noms d'élévation → bordure fine */
+  --elev-raised-sm: var(--elev-border);
+  --elev-raised: var(--elev-border);
+  --elev-raised-lg: var(--elev-border), 0 8px 28px rgba(43, 39, 36, 0.1);
+  --elev-inset-sm: var(--elev-border-inset);
+  --elev-inset: var(--elev-border-inset);
+  --elev-press: var(--elev-border-inset);
 }
 
 [data-theme="dark"] {
-  --surface-base: #1c1c1e;
-  --surface-raised: #1c1c1e;
-  --surface-highlight: #2c2c2e;
-  --surface-inset: #1c1c1e;
-  --surface-scrim: rgba(0, 0, 0, 0.55);
-  --surface-danger: rgba(255, 69, 58, 0.15);
+  --surface-0: #161412;
+  --surface-1: #211e1b;
+  --surface-2: #2b2724;
+  --border-token: #36312c;
+  --surface-scrim: rgba(0, 0, 0, 0.6);
+  --surface-glass: rgba(33, 30, 27, 0.84);
 
-  --text-primary: #ffffff;
-  --text-secondary: #c7c7cc;
-  --text-tertiary: #8e8e93;
-  --text-inverse: #0a0a0a;
-  --text-expense: #ff453a;
-  --text-income: #32d74b;
-  --icon-primary: #ffffff;
-  --icon-secondary: #8e8e93;
-  --separator: rgba(255, 255, 255, 0.08);
-  --hairline: rgba(255, 255, 255, 0.12);
+  --ink: #f2efea;
+  --ink-inverse: #2b2724; /* pilules d'action inversées */
+  --text-secondary: #c9c2ba;
+  --ink-muted: #9c948c;
 
-  --accent-bg: #ffffff;
-  --accent-text: #0a0a0a;
-  --red: #ff453a;
-  --green: #32d74b;
+  --accent-orange: #ee7b26;
 
-  --light-source: rgba(255, 255, 255, 0.045);
-  --light-source-strong: rgba(255, 255, 255, 0.07);
-  --dark-source: rgba(0, 0, 0, 0.55);
-  --dark-source-strong: rgba(0, 0, 0, 0.7);
+  --red: #e5574a;
+  --surface-danger: rgba(229, 87, 74, 0.15);
+
+  --elev-overlay: 0 -2px 24px rgba(0, 0, 0, 0.4);
+  --elev-raised-lg: var(--elev-border), 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -152,80 +157,58 @@ body {
   display: none;
 }
 
-/* Fond du lecteur plein écran : le fond neutre habituel (clair/sombre selon
-   le thème), avec juste un lavis léger de la couleur de la pochette en haut
-   — pas un aplat saturé. Version opaque, sans backdrop-filter : le verre
-   dépoli (blur) s'est avéré trop coûteux sur téléphone (ouverture à 5s) et a
-   été retiré — priorité à la fiabilité sur l'effet visuel. */
-@property --color-soft {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: rgba(255, 255, 255, 0);
-}
-
+/* Lecteur plein écran : papier uni, sans teinte de pochette (D.A : les images
+   apportent leurs couleurs, le reste reste papier/encre/orange). Sans
+   backdrop-filter : trop coûteux à l'ouverture sur téléphone. */
 .dynamic-bg {
-  background: radial-gradient(circle at 30% 0%, var(--color-soft) 0%, transparent 60%), var(--surface-base);
-  transition:
-    --color-soft 0.8s ease,
-    background var(--duration-base) var(--ease-standard);
+  background: var(--surface-0);
 }
 
 .glass-surface {
-  background: var(--surface-raised);
-  box-shadow: var(--elev-raised);
+  background: var(--surface-1);
+  box-shadow: var(--elev-border);
 }
 
-/* Mini-barre "now playing" — surface neutre légèrement teintée par la
-   couleur de la pochette en cours (via --color-soft, posée en style inline
-   par le composant), pour se distinguer du reste de la page sans redevenir
-   un aplat saturé. */
+/* Mini-barre : papier + bordure fine (le verre arrive au lot 4). */
 .mini-tint {
-  background: linear-gradient(120deg, var(--color-soft, transparent) 0%, transparent 60%), var(--surface-raised);
+  background: var(--surface-1);
 }
 
-/* Élévations néomorphiques "sur couleur" — utilisent la teinte du titre en
-   cours plutôt que les sources lumineuses neutres, pour que les contrôles du
-   lecteur restent en relief sur le fond coloré. */
+/* Anciennes élévations "sur couleur" : désormais bordure fine. */
 .elev-oncolor-raised {
-  box-shadow:
-    4px 4px 10px var(--color-dark, rgba(0, 0, 0, 0.35)),
-    -3px -3px 8px var(--color-light, rgba(255, 255, 255, 0.08));
+  box-shadow: var(--elev-border);
 }
 .elev-oncolor-inset {
-  box-shadow:
-    inset 3px 3px 7px var(--color-dark, rgba(0, 0, 0, 0.35)),
-    inset -2px -2px 6px var(--color-light, rgba(255, 255, 255, 0.08));
+  box-shadow: var(--elev-border-inset);
 }
 
 .press-tactile {
   transition:
     box-shadow var(--duration-micro) var(--ease-standard),
-    transform var(--duration-micro) var(--ease-standard);
+    transform var(--duration-micro) var(--ease-standard),
+    opacity var(--duration-micro) var(--ease-standard);
 }
 .press-tactile:active {
   transform: scale(var(--press-scale));
 }
 
-/* Barre de progression plate façon Apple Music — piste grise translucide,
-   remplissage sombre/clair selon le thème, curseur rond blanc. Le pourcentage
-   rempli vient de la variable --progress posée en style inline (React). */
+/* Barre de progression : rail fin, partie lue en dégradé signature, pouce papier
+   à bordure. Le pourcentage vient de --progress (style inline, React). */
 .progress-range {
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(
-    to right,
-    var(--text-primary) var(--progress, 0%),
-    rgba(120, 120, 128, 0.3) var(--progress, 0%)
-  );
+  border-radius: var(--radius-pill);
+  background:
+    linear-gradient(180deg, var(--accent-orange-bright), var(--accent-orange)) 0 0 / var(--progress, 0%) 100% no-repeat,
+    var(--border-token);
 }
 .progress-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 14px;
   height: 14px;
   margin-top: 0;
-  border-radius: 999px;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-pill);
+  background: var(--surface-1);
+  box-shadow: var(--elev-border);
 }

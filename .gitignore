@@ -9,3 +9,7 @@ public/covers/*.jpg
 !public/audio/.gitkeep
 !public/lyrics/.gitkeep
 !public/covers/.gitkeep
+
+# Captures avant/après (locales)
+captures/
+.claude/launch.json

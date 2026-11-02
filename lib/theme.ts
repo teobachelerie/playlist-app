@@ -14,6 +14,9 @@ export function applyTheme(theme: "dark" | "light") {
     document.documentElement.removeAttribute("data-theme");
   }
   localStorage.setItem(STORAGE_KEY, theme);
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", theme === "dark" ? "#161412" : "#E9E6E2");
 }
 
 export function toggleTheme(): "dark" | "light" {

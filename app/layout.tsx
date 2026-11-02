@@ -16,7 +16,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#F2F2F7",
+  themeColor: "#E9E6E2",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("expenses-theme");if(t==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}`,
+            __html: `try{var t=localStorage.getItem("expenses-theme");if(t==="dark"){document.documentElement.setAttribute("data-theme","dark");var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#161412");}}catch(e){}`,
           }}
         />
       </head>

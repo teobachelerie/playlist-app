@@ -5,9 +5,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Alias historiques de l'app, redirigés vers les variables du design
-        // system Cap Finances — les classNames existants (bg-base, text-text,
-        // text-muted, bg-surface, text-accent...) continuent de marcher.
+        // Tokens D.A
+        "surface-0": "var(--surface-0)",
+        "surface-1": "var(--surface-1)",
+        "surface-2": "var(--surface-2)",
+        border: "var(--border-token)",
+        ink: "var(--ink)",
+        "ink-muted": "var(--ink-muted)",
+        orange: "var(--accent-orange)",
+        "orange-bright": "var(--accent-orange-bright)",
+        // Alias historiques de l'app, redirigés vers les tokens D.A
         base: "var(--surface-base)",
         surface: "var(--surface-raised)",
         highlight: "var(--surface-highlight)",
@@ -23,26 +30,11 @@ const config: Config = {
         accent: "var(--accent-bg)",
         "accent-text": "var(--accent-text)",
         red: "var(--red)",
-        green: "var(--green)",
       },
       fontFamily: {
-        sans: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"SF Pro Text"',
-          '"SF Pro Display"',
-          "Inter",
-          "system-ui",
-          "sans-serif",
-        ],
-        display: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          '"SF Pro Display"',
-          "Inter",
-          "system-ui",
-          "sans-serif",
-        ],
+        sans: ["Inter", "-apple-system", '"SF Pro Text"', "system-ui", "sans-serif"],
+        display: ["Inter", "-apple-system", '"SF Pro Display"', "system-ui", "sans-serif"],
+        serif: ['"Source Serif 4"', "Georgia", "serif"],
       },
       fontSize: {
         balance: "56px",
@@ -59,14 +51,17 @@ const config: Config = {
       },
       borderRadius: {
         xs: "10px",
-        sm: "12px",
-        md: "14px",
+        sm: "var(--radius-sm)",
+        md: "var(--radius-field)",
+        field: "var(--radius-field)",
         control: "16px",
-        lg: "20px",
-        card: "24px",
-        xl: "28px",
+        lg: "var(--radius-card)",
+        card: "var(--radius-card)",
+        xl: "var(--radius-sheet)",
+        sheet: "var(--radius-sheet)",
       },
       boxShadow: {
+        border: "var(--elev-border)",
         "raised-sm": "var(--elev-raised-sm)",
         raised: "var(--elev-raised)",
         "raised-lg": "var(--elev-raised-lg)",
@@ -79,11 +74,13 @@ const config: Config = {
         micro: "150ms",
         base: "200ms",
         slow: "250ms",
+        stack: "280ms",
       },
       transitionTimingFunction: {
         standard: "cubic-bezier(0.33, 0, 0.15, 1)",
         out: "cubic-bezier(0.16, 1, 0.3, 1)",
         sheet: "cubic-bezier(0.32, 0.72, 0, 1)",
+        stack: "cubic-bezier(0.2, 0.8, 0.2, 1)",
       },
     },
   },
