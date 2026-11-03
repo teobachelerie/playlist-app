@@ -258,6 +258,66 @@ select {
   box-shadow: var(--elev-border);
 }
 
+/* Indicateur « en cours » : trois barres orange (jamais la couleur seule).
+   Elles bougent en lecture, figées en pause. */
+.barres {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 12px;
+  height: 12px;
+  color: var(--accent-orange);
+}
+.barres span {
+  flex: 1;
+  height: 40%;
+  border-radius: 1px;
+  background: currentColor;
+}
+.barres span:nth-child(2) {
+  height: 100%;
+}
+.barres span:nth-child(3) {
+  height: 65%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .barres[data-lecture="true"] span {
+    animation: barres 0.9s var(--ease-standard) infinite alternate;
+  }
+  .barres[data-lecture="true"] span:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .barres[data-lecture="true"] span:nth-child(3) {
+    animation-delay: -0.6s;
+  }
+}
+@keyframes barres {
+  from {
+    height: 25%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+/* Point sous une icône active (aléatoire, répéter, panneau) : l'état ne
+   repose pas que sur la couleur. */
+.actif-point {
+  position: relative;
+  color: var(--accent-orange);
+}
+.actif-point::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }

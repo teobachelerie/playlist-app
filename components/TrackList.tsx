@@ -8,19 +8,32 @@ import AddTrackButton from "@/components/AddTrackButton";
 function TrackList({
   tracks,
   currentId,
+  isPlaying,
   onSelect,
 }: {
   tracks: Track[];
   currentId: string | null;
+  isPlaying: boolean;
   onSelect: (id: string) => void;
 }) {
+  const totalMin = Math.round(tracks.reduce((sum, t) => sum + t.duration, 0) / 60);
+
   return (
     <div className="h-full flex flex-col">
       <div
         className="shrink-0 z-10 flex items-center justify-between px-5 pt-6 pb-3"
         style={{ paddingLeft: "var(--gutter-screen)", paddingRight: "var(--gutter-screen)" }}
       >
-        <h1 className="titre-encre text-display">Playlist</h1>
+        <div>
+          <h1 className="titre-encre text-display">
+            Ma <span className="mot-fort">playlist</span>
+          </h1>
+          {tracks.length > 0 && (
+            <p className="label-section mt-1 tabular-nums">
+              {tracks.length} titres · {totalMin} min
+            </p>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <AddTrackButton />
           <ThemeToggle />
@@ -28,10 +41,12 @@ function TrackList({
       </div>
 
       {tracks.length === 0 ? (
-        <div className="flex items-center justify-center p-8 text-center">
-          <p className="text-muted">
-            Playlist vide — ajoute un premier titre avec{" "}
-            <code className="text-text">npm run add-track</code>.
+        <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
+          <p className="titre-encre text-title-1">
+            Rien à <span className="mot-fort">écouter</span>
+          </p>
+          <p className="text-subhead text-tertiary">
+            Ajoute un premier titre avec le bouton + ou <code>npm run add-track</code>.
           </p>
         </div>
       ) : (
@@ -43,15 +58,16 @@ function TrackList({
               "linear-gradient(to bottom, transparent, black 16px, black calc(100% - 24px), transparent)",
           }}
         >
-          <ul className="px-2 pt-2 pb-44">
+          <ul className="carte mx-4 mt-2 mb-44 overflow-hidden">
             {tracks.map((track) => {
               const active = track.id === currentId;
               return (
-                <li key={track.id} className="px-3">
+                <li key={track.id} className="border-b border-border last:border-b-0">
                   <button
                     onClick={() => onSelect(track.id)}
-                    className={`press-tactile active:opacity-[0.55] w-full text-left flex items-center gap-3 my-1 px-3 py-2.5 rounded-control transition duration-base ease-standard ${
-                      active ? "carte" : ""
+                    aria-current={active ? "true" : undefined}
+                    className={`press-tactile active:opacity-[0.55] w-full text-left flex items-center gap-3 px-3 py-2.5 transition duration-base ease-standard ${
+                      active ? "bg-surface-2" : ""
                     }`}
                   >
                     {track.coverUrl ? (
@@ -68,7 +84,20 @@ function TrackList({
                     )}
                     <span className="min-w-0 flex-1 flex items-baseline justify-between gap-4">
                       <span className="min-w-0">
-                        <span className="block truncate text-body font-medium text-text">{track.title}</span>
+                        <span
+                          className={`flex items-center gap-1.5 text-body font-medium ${
+                            active ? "text-orange" : "text-text"
+                          }`}
+                        >
+                          {active && (
+                            <span className="barres shrink-0" data-lecture={isPlaying} aria-hidden="true">
+                              <span />
+                              <span />
+                              <span />
+                            </span>
+                          )}
+                          <span className="truncate">{track.title}</span>
+                        </span>
                         <span className="block truncate text-footnote text-tertiary">{track.artist}</span>
                       </span>
                       <span className="text-caption text-tertiary shrink-0 tabular-nums">

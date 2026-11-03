@@ -90,12 +90,13 @@ function CompactPlayer({
         <div className="flex items-center justify-center gap-7 mt-2">
           <button
             onClick={onToggleShuffle}
-            className={shuffle ? "text-text" : "text-tertiary hover:text-muted"}
+            className={shuffle ? "actif-point" : "text-tertiary"}
+            aria-pressed={shuffle}
             aria-label="Lecture aléatoire"
           >
             <Shuffle size={18} />
           </button>
-          <button onClick={onPrevious} className="text-text hover:opacity-70" aria-label="Titre précédent">
+          <button onClick={onPrevious} className="press-tactile text-text active:opacity-[0.55]" aria-label="Titre précédent">
             <SkipBack size={24} fill="currentColor" />
           </button>
           <button
@@ -105,12 +106,13 @@ function CompactPlayer({
           >
             {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
           </button>
-          <button onClick={onNext} className="text-text hover:opacity-70" aria-label="Titre suivant">
+          <button onClick={onNext} className="press-tactile text-text active:opacity-[0.55]" aria-label="Titre suivant">
             <SkipForward size={24} fill="currentColor" />
           </button>
           <button
             onClick={onToggleRepeat}
-            className={repeat ? "text-text" : "text-tertiary hover:text-muted"}
+            className={repeat ? "actif-point" : "text-tertiary"}
+            aria-pressed={repeat}
             aria-label="Répéter"
           >
             <Repeat size={18} />

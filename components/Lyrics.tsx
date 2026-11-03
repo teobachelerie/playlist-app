@@ -173,15 +173,15 @@ function Lyrics({
   }, [idx]);
 
   if (!lyricsUrl) {
-    return <p className="text-muted text-sm">Pas de paroles trouvées pour ce titre.</p>;
+    return <p className="text-tertiary text-subhead">Pas de paroles trouvées pour ce titre.</p>;
   }
 
   if (status === "loading") {
-    return <p className="text-muted text-sm">Chargement des paroles…</p>;
+    return <p className="text-tertiary text-subhead">Chargement des paroles…</p>;
   }
 
   if (status === "error") {
-    return <p className="text-muted text-sm">Paroles indisponibles pour ce titre.</p>;
+    return <p className="text-tertiary text-subhead">Paroles indisponibles pour ce titre.</p>;
   }
 
   return (

@@ -162,7 +162,7 @@ export default function PlayerSheet({
           onPointerUp={handlePointerUp}
         >
           <div className="flex justify-center">
-            <div className="w-10 h-1.5 rounded-full bg-hairline" />
+            <div className="w-10 h-1.5 rounded-full bg-border" />
           </div>
           <div className="flex items-center gap-4">
             {track.coverUrl ? (
@@ -235,14 +235,15 @@ export default function PlayerSheet({
           <div className="flex items-center justify-center gap-8">
             <button
               onClick={onToggleShuffle}
-              className={shuffle ? "text-text" : "text-tertiary hover:text-muted"}
+              className={shuffle ? "actif-point" : "text-tertiary"}
+            aria-pressed={shuffle}
               aria-label="Lecture aléatoire"
             >
               <Shuffle size={20} />
             </button>
             <button
               onClick={onPrevious}
-              className="text-text hover:opacity-70"
+              className="press-tactile text-text active:opacity-[0.55]"
               aria-label="Titre précédent"
             >
               <SkipBack size={30} fill="currentColor" />
@@ -254,12 +255,13 @@ export default function PlayerSheet({
             >
               {isPlaying ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" />}
             </button>
-            <button onClick={onNext} className="text-text hover:opacity-70" aria-label="Titre suivant">
+            <button onClick={onNext} className="press-tactile text-text active:opacity-[0.55]" aria-label="Titre suivant">
               <SkipForward size={30} fill="currentColor" />
             </button>
             <button
               onClick={onToggleRepeat}
-              className={repeat ? "text-text" : "text-tertiary hover:text-muted"}
+              className={repeat ? "actif-point" : "text-tertiary"}
+            aria-pressed={repeat}
               aria-label="Répéter"
             >
               <Repeat size={20} />
@@ -270,21 +272,23 @@ export default function PlayerSheet({
           <div className="grid grid-cols-3 items-center text-tertiary px-2">
             <button
               onClick={() => setPanel(panel === "lyrics" ? "cover" : "lyrics")}
-              className={`justify-self-start ${panel === "lyrics" ? "text-text" : "hover:text-muted"}`}
+              className={`justify-self-start ${panel === "lyrics" ? "actif-point" : ""}`}
+              aria-pressed={panel === "lyrics"}
               aria-label="Afficher/masquer les paroles"
             >
               <Captions size={26} />
             </button>
             <div className="justify-self-center">
               {airplaySupported && (
-                <button onClick={handleAirplay} className="hover:text-muted" aria-label="Sortie audio">
+                <button onClick={handleAirplay} className="press-tactile active:opacity-[0.55]" aria-label="Sortie audio">
                   <Airplay size={26} />
                 </button>
               )}
             </div>
             <button
               onClick={() => setPanel(panel === "queue" ? "lyrics" : "queue")}
-              className={`justify-self-end ${panel === "queue" ? "text-text" : "hover:text-muted"}`}
+              className={`justify-self-end ${panel === "queue" ? "actif-point" : ""}`}
+              aria-pressed={panel === "queue"}
               aria-label="File d'attente"
             >
               <ListMusic size={26} />
