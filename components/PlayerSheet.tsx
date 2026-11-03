@@ -144,7 +144,7 @@ export default function PlayerSheet({
       />
 
       <div
-        className="dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-sheet shadow-overlay flex flex-col overflow-hidden z-40"
+        className="fin-backdrop fixed inset-x-0 bottom-0 h-dvh rounded-t-sheet shadow-overlay flex flex-col overflow-hidden z-40"
         style={
           {
             transform,

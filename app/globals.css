@@ -14,6 +14,8 @@
   --border-token: #dad5ce;
   --surface-scrim: rgba(43, 39, 36, 0.38);
   --surface-glass: rgba(242, 239, 234, 0.84);
+  --grid-line: rgba(43, 39, 36, 0.04);
+  --window-shadow: rgba(43, 39, 36, 0.06);
 
   /* Encre et gris chauds */
   --ink: #2b2724;
@@ -104,6 +106,8 @@
   --border-token: #36312c;
   --surface-scrim: rgba(0, 0, 0, 0.6);
   --surface-glass: rgba(33, 30, 27, 0.84);
+  --grid-line: rgba(242, 239, 234, 0.04);
+  --window-shadow: rgba(0, 0, 0, 0.28);
 
   --ink: #f2efea;
   --ink-inverse: #2b2724; /* pilules d'action inversées */
@@ -258,11 +262,80 @@ select {
   display: none;
 }
 
-/* Lecteur plein écran : papier uni, sans teinte de pochette (D.A : les images
-   apportent leurs couleurs, le reste reste papier/encre/orange). Sans
-   backdrop-filter : trop coûteux à l'ouverture sur téléphone. */
-.dynamic-bg {
+/* Fond d'app Finelio : base unie, grille de 120 px à 4 % d'encre, et grandes
+   ombres de fenêtre diagonales qui dérivent lentement. La dérive se fait par
+   transform sur un pseudo-élément non répété (jamais background-position sur
+   un fond répété : couture visible). */
+.fin-backdrop {
   background: var(--surface-0);
+  isolation: isolate;
+}
+.fin-backdrop::before,
+.fin-backdrop::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+.fin-backdrop::before {
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 120px 120px;
+  background-position: -1px -1px;
+}
+.fin-backdrop::after {
+  inset: -25%;
+  background: linear-gradient(
+    115deg,
+    transparent 12%,
+    var(--window-shadow) 22%,
+    var(--window-shadow) 30%,
+    transparent 38%,
+    transparent 46%,
+    var(--window-shadow) 52%,
+    transparent 58%,
+    transparent 64%,
+    var(--window-shadow) 72%,
+    var(--window-shadow) 82%,
+    transparent 90%
+  );
+  will-change: transform;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fin-backdrop::after {
+    animation: fin-derive 48s var(--ease-standard) infinite alternate;
+  }
+}
+@keyframes fin-derive {
+  from {
+    transform: translate3d(-6%, -3%, 0);
+  }
+  to {
+    transform: translate3d(6%, 3%, 0);
+  }
+}
+
+/* Verre (mini-lecteur) : papier à 84 %, flou, pilule bordée. Repli opaque si
+   transparence réduite ou backdrop-filter absent. */
+.verre {
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  backdrop-filter: blur(28px) saturate(170%);
+  box-shadow: var(--elev-float);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .verre {
+    background: var(--surface-1);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .verre {
+    background: var(--surface-1);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 .press-tactile {

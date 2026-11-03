@@ -15,9 +15,9 @@ function TrackList({
   onSelect: (id: string) => void;
 }) {
   return (
-    <div className="h-full flex flex-col bg-base">
+    <div className="h-full flex flex-col">
       <div
-        className="shrink-0 z-10 bg-base flex items-center justify-between px-5 pt-6 pb-3"
+        className="shrink-0 z-10 flex items-center justify-between px-5 pt-6 pb-3"
         style={{ paddingLeft: "var(--gutter-screen)", paddingRight: "var(--gutter-screen)" }}
       >
         <h1 className="titre-encre text-display">Playlist</h1>
