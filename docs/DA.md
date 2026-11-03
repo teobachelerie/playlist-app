@@ -73,6 +73,11 @@ basculement dans `lib/theme.ts`.
   saturate(170%)`, repli opaque sous `prefers-reduced-transparency` ou sans
   `backdrop-filter`. Pas de verre sur le lecteur plein écran (coûteux à l'ouverture).
 - Les pochettes apportent leurs couleurs ; aucune teinte de pochette sur l'UI.
+- Liste : cadre fixe à coupe nette (coins 20 px + liseré) en haut et en bas.
+  Le lecteur compact se **superpose** au cadre, même largeur, bas et coins
+  alignés ; la liste réserve `--player-height` en marge intérieure.
+- `.verre-liquide` (lecteur compact) : papier ~58 %, `blur(24px)
+  saturate(180%)`, reflet clair en haut, liseré clair, ombre plus marquée.
 
 ## Mouvement
 

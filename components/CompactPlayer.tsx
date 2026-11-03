@@ -47,8 +47,8 @@ function CompactPlayer({
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="fixed inset-x-3 bottom-5 z-40">
-      <div className="verre rounded-sheet px-5 pt-4 pb-3">
+    <div className="fixed inset-x-4 bottom-5 z-40">
+      <div className="verre-liquide rounded-[21px] px-5 pt-4 pb-3">
         <div className="flex items-center gap-3">
           {track.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
