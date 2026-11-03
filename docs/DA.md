@@ -104,6 +104,8 @@ basculement dans `lib/theme.ts`.
 
 ## Contournements iOS à ne pas toucher sans prévenir
 
-`position: fixed` sur `html, body` ; `h-dvh` et `env(safe-area-inset-bottom)`
-dans `PlayerSheet` ; `statusBarStyle: black-translucent` ; `touch-action:
+**Pas de `position: fixed` sur `html, body`** (retiré : en mode écran d'accueil
+avec barre d'état translucide, il créait une bande vide de la hauteur de la
+barre d'état en bas) ; hauteur `--app-h` mesurée au démarrage (`layout.tsx`) ;
+lecteur compact en `absolute` dans `.app-ecran` ; `viewport-fit=cover` ; `statusBarStyle: black-translucent` ; `touch-action:
 manipulation` ; masque de fondu de la liste.
