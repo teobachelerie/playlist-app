@@ -25,8 +25,8 @@ function TrackList({
         style={{ paddingLeft: "var(--gutter-screen)", paddingRight: "var(--gutter-screen)" }}
       >
         <div>
-          <h1 className="titre-encre text-display">
-            Ma <span className="mot-fort">playlist</span>
+          <h1 className="titre-encre text-display intro-fondu">
+            Ma <span className="mot-fort intro-monte">playlist</span>
           </h1>
           {tracks.length > 0 && (
             <p className="label-section mt-1 tabular-nums">

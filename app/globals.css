@@ -141,6 +141,7 @@ body {
 }
 
 body {
+  -webkit-tap-highlight-color: transparent;
   background: var(--surface-base);
   color: var(--text-primary);
   font: var(--weight-regular) 17px/var(--leading-relaxed) var(--font-core);
@@ -398,14 +399,53 @@ select {
   }
 }
 
-.press-tactile {
-  transition:
-    box-shadow var(--duration-micro) var(--ease-standard),
-    transform var(--duration-micro) var(--ease-standard),
-    opacity var(--duration-micro) var(--ease-standard);
+/* Retour au toucher : légère baisse d'échelle. iOS annule :active au
+   pointercancel (défilement), donc rien ne reste enfoncé en scrollant. */
+@media (prefers-reduced-motion: no-preference) {
+  .press-tactile {
+    transition:
+      transform var(--duration-micro) var(--ease-standard),
+      opacity var(--duration-micro) var(--ease-standard);
+  }
+  .press-tactile:active {
+    transform: scale(var(--press-scale));
+  }
 }
-.press-tactile:active {
-  transform: scale(var(--press-scale));
+button,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Intro de lancement : une fois par session (data-intro posé par le script
+   d'amorçage), le mot fort monte en fondu. < 1 s, sautée si animations réduites. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-intro] .intro-monte {
+    display: inline-block;
+    animation: intro-monte 700ms var(--ease-out) 120ms both;
+  }
+  html[data-intro] .intro-fondu {
+    animation: intro-fondu 500ms var(--ease-out) both;
+  }
+}
+@keyframes intro-monte {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes intro-fondu {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Barre de progression : rail fin, partie lue en dégradé signature, pouce papier
