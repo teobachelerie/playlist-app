@@ -34,7 +34,6 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "-apple-system", '"SF Pro Text"', "system-ui", "sans-serif"],
         display: ["Inter", "-apple-system", '"SF Pro Display"', "system-ui", "sans-serif"],
-        serif: ['"Source Serif 4"', "Georgia", "serif"],
       },
       fontSize: {
         balance: "56px",

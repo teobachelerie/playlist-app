@@ -1,5 +1,5 @@
-/* Inter 400 à 900 + Source Serif 4 italique 700 (mots forts uniquement). */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Source+Serif+4:ital,opsz,wght@1,8..60,700&display=swap");
+/* Inter seule, 400 à 900. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,7 +49,6 @@
   /* Typo */
   --font-core: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
   --font-display: var(--font-core);
-  --font-serif: "Source Serif 4", Georgia, serif;
   --font-numeric: var(--font-core);
   --weight-regular: 400;
   --weight-medium: 500;
@@ -62,7 +61,6 @@
   --leading-relaxed: 1.5;
   --tracking-display: -0.035em;
   --tracking-title: -0.035em;
-  --tracking-serif: -0.01em;
   --tracking-body: -0.01em;
   --tracking-caption: 0em;
 
@@ -168,19 +166,15 @@ select {
   color: var(--ink);
 }
 
-/* Mot fort : Source Serif 4 italique gras en dégradé signature.
+/* Mot fort : Inter Black en dégradé signature (Inter seule dans l'app).
    En grand seulement, un ou deux mots par écran. */
 .mot-fort {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-serif);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-display);
   background: var(--grad-signature);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  /* évite que l'italique soit rogné par le clip */
-  padding-right: 0.08em;
 }
 
 /* Chiffres mis en avant : Inter Black en dégradé signature. */

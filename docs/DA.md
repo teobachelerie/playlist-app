@@ -6,7 +6,8 @@ Répartition cible : 60 % fond, 25 % papier, 10 % encre, 5 % orange.
 
 Source : prompt « Aligner la D.A de mon app de musique sur celle de Finelio »
 (fait foi sur le PDF *Teo Bach - Direction artistique v3*, qui parle encore
-d'Apple Garamond, abandonné le 2 novembre 2026).
+d'Apple Garamond, abandonné le 2 novembre 2026). **Écart voulu avec Finelio :
+Inter seule, pas de Source Serif** (décision de Téo, 3 novembre 2026).
 
 Toutes les valeurs vivent en variables CSS dans `app/globals.css`, relayées
 par `tailwind.config.ts`. **Aucun hex dans les composants.**
@@ -47,15 +48,15 @@ basculement dans `lib/theme.ts`.
 
 ## Typo
 
-- **Inter** partout (400 à 900). **Source Serif 4** italique 700 pour les mots forts.
+- **Inter seule**, partout (400 à 900). Aucune serif, même pour les mots forts.
 - `.titre-encre` : Inter Black, `-0.035em`, interligne 1,05 (titres, titre du
   morceau en lecture, paroles).
-- `.mot-fort` : serif italique gras en dégradé, **un ou deux mots par écran,
-  en grand seulement** (« Ma *playlist* », « Rien à *écouter* »).
+- `.mot-fort` : Inter Black en dégradé signature, **un ou deux mots par écran,
+  en grand seulement** (« Ma **playlist** », « Rien à **écouter** »).
 - `.chiffre-fort` : gros chiffres Inter Black en dégradé.
 - `.label-section` : 12 px, capitales, gris chaud.
 - Durées et compteurs en `tabular-nums`. Champs ≥ 16 px.
-- Interdits : Garamond, Helvetica, Didot, manuscrites. Aucun emoji ; icônes lucide.
+- Interdits : toute autre police (Source Serif, Garamond, Helvetica, Didot, manuscrites). Aucun emoji ; icônes lucide.
 
 ## Surfaces et formes
 
