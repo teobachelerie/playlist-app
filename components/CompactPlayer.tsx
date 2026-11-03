@@ -47,7 +47,9 @@ function CompactPlayer({
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="fixed z-40" style={{ left: "var(--edge)", right: "var(--edge)", bottom: "var(--edge)" }}>
+    // Positionné dans l'écran de l'app (pas le viewport) : en mode écran
+    // d'accueil iOS, le viewport s'arrête avant le bas réel de l'écran.
+    <div className="absolute z-40" style={{ left: "var(--edge)", right: "var(--edge)", bottom: "var(--edge)" }}>
       <div
         className="verre-liquide rounded-t-[var(--radius-frame-top)] rounded-b-[var(--radius-frame)] px-5 pt-4"
         // Dégage la barre d'accueil, qui passe sur le bas du lecteur.

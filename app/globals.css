@@ -163,13 +163,16 @@ html {
   background: var(--surface-0);
 }
 
-/* Mode écran d'accueil (iOS) : avec viewport-fit=cover, 100dvh / 100 %
-   peuvent s'arrêter avant le bas réel de l'écran ; 100lvh couvre tout. */
+/* Mode écran d'accueil (iOS) : avec la barre d'état translucide, la hauteur
+   de page (100 %, 100dvh, 100lvh) est amputée de la barre d'état alors que
+   l'affichage commence tout en haut → bande vide en bas. --app-h est mesurée
+   par le script d'amorçage (layout.tsx) à partir de la taille réelle de
+   l'écran. */
 @media (display-mode: standalone) {
   html,
   body,
   .app-ecran {
-    height: 100lvh;
+    height: var(--app-h, 100lvh);
   }
 }
 

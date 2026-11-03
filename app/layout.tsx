@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(!sessionStorage.getItem("intro")){sessionStorage.setItem("intro","1");document.documentElement.setAttribute("data-intro","");}}catch(e){}try{var t=localStorage.getItem("expenses-theme");if(t==="dark"){document.documentElement.setAttribute("data-theme","dark");var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#161412");}}catch(e){}`,
+            __html: `(function(){var d=document.documentElement;function h(){var v=innerHeight;if(navigator.standalone){var f=innerWidth<innerHeight?screen.height:screen.width;if(f>v)v=f;}d.style.setProperty("--app-h",v+"px");}h();addEventListener("resize",h);addEventListener("orientationchange",h);})();try{if(!sessionStorage.getItem("intro")){sessionStorage.setItem("intro","1");document.documentElement.setAttribute("data-intro","");}}catch(e){}try{var t=localStorage.getItem("expenses-theme");if(t==="dark"){document.documentElement.setAttribute("data-theme","dark");var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#161412");}}catch(e){}`,
           }}
         />
       </head>
