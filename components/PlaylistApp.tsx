@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Track } from "@/lib/playlist";
 import { shuffleAvoidingSameArtist } from "@/lib/shuffle";
+import DebugViewport from "@/components/DebugViewport";
 import TrackList from "@/components/TrackList";
 import CompactPlayer from "@/components/CompactPlayer";
 
@@ -190,6 +191,8 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
           onAirplay={handleAirplay}
         />
       )}
+
+      <DebugViewport />
 
       {current && (
         <audio
