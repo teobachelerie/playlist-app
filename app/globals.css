@@ -82,6 +82,8 @@
   --screen-radius: 55px;
   --edge: 16px;
   --radius-frame: calc(var(--screen-radius) - var(--edge));
+  /* Haut du cadre et du lecteur : rayon de carte d'origine (20 px + bordure). */
+  --radius-frame-top: 21px;
 
   /* Rayons */
   --radius-sm: 12px;

@@ -55,15 +55,17 @@ function TrackList({
         </div>
       ) : (
         // Cadre fixe, coupe nette en haut et en bas : la zone de défilement a
-        // des coins concentriques à ceux de l'écran (--radius-frame), deux
+        // le rayon de carte en haut et, en bas, des coins concentriques à ceux de
+        // l'écran (--radius-frame), deux
         // liserés redessinent les bords. Le lecteur se pose par-dessus, aligné
         // sur le bas du cadre ; la liste réserve sa hauteur en marge intérieure.
         <div className="relative flex-1 min-h-0 mx-4 mt-2" style={{ marginBottom: "var(--edge)" }}>
-          <div className="h-full overflow-y-auto rounded-[var(--radius-frame)] p-px">
+          <div className="h-full overflow-y-auto rounded-t-[var(--radius-frame-top)] rounded-b-[var(--radius-frame)] p-px">
             <ul
               className="carte overflow-hidden"
               style={{
-                borderRadius: "calc(var(--radius-frame) - 1px)",
+                borderRadius:
+                  "calc(var(--radius-frame-top) - 1px) calc(var(--radius-frame-top) - 1px) calc(var(--radius-frame) - 1px) calc(var(--radius-frame) - 1px)",
                 paddingBottom: currentId ? "var(--player-height)" : undefined,
               }}
             >
@@ -120,7 +122,7 @@ function TrackList({
           </div>
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-12 rounded-t-[var(--radius-frame)] border-x border-t border-border"
+            className="pointer-events-none absolute inset-x-0 top-0 h-6 rounded-t-[var(--radius-frame-top)] border-x border-t border-border"
           />
           <div
             aria-hidden="true"

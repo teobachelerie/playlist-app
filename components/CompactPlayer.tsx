@@ -49,7 +49,7 @@ function CompactPlayer({
   return (
     <div className="fixed z-40" style={{ left: "var(--edge)", right: "var(--edge)", bottom: "var(--edge)" }}>
       <div
-        className="verre-liquide rounded-[var(--radius-frame)] px-5 pt-4"
+        className="verre-liquide rounded-t-[var(--radius-frame-top)] rounded-b-[var(--radius-frame)] px-5 pt-4"
         // Dégage la barre d'accueil, qui passe sur le bas du lecteur.
         style={{ paddingBottom: "max(12px, calc(env(safe-area-inset-bottom) - 12px))" }}
       >

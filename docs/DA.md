@@ -77,7 +77,8 @@ basculement dans `lib/theme.ts`.
   Le lecteur compact se **superpose** au cadre, même largeur, bas et coins
   alignés ; la liste réserve `--player-height` en marge intérieure.
 - Coins concentriques à l'écran (iPhone 17 Pro, 55 pt) : un élément posé à
-  `--edge` (16 px) du bord prend `--radius-frame` = 55 − 16 = 39 px.
+  `--edge` (16 px) du bord prend `--radius-frame` = 55 − 16 = 39 px **en bas**
+  (coins voisins de l'écran). En haut, cadre et lecteur gardent 21 px.
 - `viewport-fit=cover` : le fond remplit tout l'écran, y compris sous la
   barre d'état ; l'en-tête et le lecteur plein écran ajoutent
   `env(safe-area-inset-top)`, le lecteur compact dégage la barre d'accueil.
