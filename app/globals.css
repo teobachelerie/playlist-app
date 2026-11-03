@@ -69,6 +69,9 @@
   --gap-list: 12px;
   --gap-section: 32px;
   --hit-min: 44px;
+  /* Espace réservé sous la liste pour le lecteur compact (≈ 186 px de haut,
+     posé à 20 px du bas) + 12 px d'air. */
+  --player-reserve: 218px;
 
   /* Rayons */
   --radius-sm: 12px;

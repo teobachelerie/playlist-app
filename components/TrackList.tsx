@@ -50,12 +50,16 @@ function TrackList({
           </p>
         </div>
       ) : (
-        // Coupe nette en haut : la zone de défilement a les mêmes coins arrondis
-        // que la carte (20 px + 1 px de bordure), et un liseré fixe redessine le
-        // bord supérieur — la liste glisse dessous comme sous un cadre.
-        <div className="relative flex-1 min-h-0 mx-4 mt-2">
-          <div className="h-full overflow-y-auto rounded-t-[21px] px-px pt-px">
-            <ul className="carte mb-44 overflow-hidden">
+        // Coupe nette en haut et en bas : la zone de défilement a les mêmes
+        // coins arrondis que la carte (20 px + 1 px de bordure) et s'arrête
+        // au-dessus du lecteur ; deux liserés fixes redessinent les bords —
+        // la liste glisse dessous comme sous un cadre.
+        <div
+          className="relative flex-1 min-h-0 mx-4 mt-2"
+          style={{ marginBottom: currentId ? "var(--player-reserve)" : "var(--gutter-screen)" }}
+        >
+          <div className="h-full overflow-y-auto rounded-[21px] p-px">
+            <ul className="carte overflow-hidden">
               {tracks.map((track) => {
                 const active = track.id === currentId;
                 return (
@@ -110,6 +114,10 @@ function TrackList({
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 h-6 rounded-t-[21px] border-x border-t border-border"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-6 rounded-b-[21px] border-x border-b border-border"
           />
         </div>
       )}
