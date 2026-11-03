@@ -13,7 +13,7 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 
-const QUEUE_PATH = "queue/pending.json";
+const QUEUE_PREFIX = "queue/";
 
 // Traite les titres demandés depuis l'app (bouton "+" sur le site) avant de
 // passer en mode interactif — nécessite BLOB_READ_WRITE_TOKEN (même que pour
@@ -26,32 +26,29 @@ async function processRemoteQueue() {
     return;
   }
 
-  const { list, put } = await import("@vercel/blob");
-  const { blobs } = await list({ prefix: QUEUE_PATH, token });
-  // On prend toujours le fichier le plus récent plutôt que d'écraser un
-  // chemin fixe — évite de dépendre d'une option d'écrasement dont la
-  // disponibilité varie selon la version du SDK.
-  const latest = blobs.sort(
-    (a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-  )[0];
-  if (!latest) return;
+  const { list, del } = await import("@vercel/blob");
+  // Chaque demande est un fichier à part dans queue/ (nom avec suffixe
+  // aléatoire). Ancien format accepté aussi : un tableau de demandes.
+  const { blobs } = await list({ prefix: QUEUE_PREFIX, token });
+  if (blobs.length === 0) return;
+  blobs.sort((a, b) => new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime());
 
-  const res = await fetch(latest.url);
-  const pending = res.ok ? await res.json() : [];
-  if (pending.length === 0) return;
-
-  console.log(`📥 ${pending.length} titre(s) en attente depuis l'app :\n`);
-  for (const { url, title, artist } of pending) {
-    console.log(`→→→ ${title} — ${artist}`);
-    await runAddTrack(url, title, artist);
-    console.log("");
+  console.log(`📥 ${blobs.length} demande(s) en attente depuis l'app :\n`);
+  for (const blob of blobs) {
+    const res = await fetch(blob.url, { cache: "no-store" });
+    if (!res.ok) continue;
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : [data];
+    let allOk = true;
+    for (const { url, title, artist } of items) {
+      console.log(`→→→ ${title} — ${artist}`);
+      const code = await runAddTrack(url, title, artist);
+      if (code !== 0) allOk = false;
+      console.log("");
+    }
+    // On ne retire la demande que si tous ses titres ont bien été ajoutés.
+    if (allOk) await del(blob.url, { token });
   }
-
-  await put(QUEUE_PATH, "[]", {
-    access: "public",
-    contentType: "application/json",
-    token,
-  });
   console.log("---\n");
 }
 

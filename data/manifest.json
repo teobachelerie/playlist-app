@@ -1694,5 +1694,37 @@
     "colorLight": "rgba(145, 153, 154, 0.18)",
     "colorDark": "rgba(10, 15, 16, 0.45)",
     "addedAt": "2026-09-16T15:04:17.569Z"
+  },
+  {
+    "id": "josman-inteo",
+    "title": "Inteo",
+    "artist": "Josman",
+    "duration": 148,
+    "audioUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/audio/josman-inteo-wN1Q7bTqL6TtqgZsqUJz08LGDbYv4b.mp3",
+    "lyricsUrl": null,
+    "wordsUrl": null,
+    "coverUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/covers/josman-inteo-QViNNsSono0i6KyBepmfAw74iLpWVQ.jpg",
+    "colorPrimary": "#161517",
+    "colorSecondary": "#2c2b2c",
+    "colorSoft": "rgba(40, 38, 41, 0.16)",
+    "colorLight": "rgba(148, 147, 148, 0.18)",
+    "colorDark": "rgba(12, 11, 12, 0.45)",
+    "addedAt": "2026-11-03T20:10:31.780Z"
+  },
+  {
+    "id": "maroon-5-cold",
+    "title": "Cold",
+    "artist": "Maroon 5",
+    "duration": 229,
+    "audioUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/audio/maroon-5-cold-uF5GWxxFhKpDJGveKluQjR1PULSFCf.mp3",
+    "lyricsUrl": null,
+    "wordsUrl": null,
+    "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8a/49/80/8a49806e-e9b6-1025-f4a8-cf51edb4504b/17UM1IM31406.rgb.jpg/600x600bb.jpg",
+    "colorPrimary": "#277e85",
+    "colorSecondary": "#5d5d5e",
+    "colorSoft": "rgba(70, 229, 242, 0.16)",
+    "colorLight": "rgba(163, 242, 249, 0.18)",
+    "colorDark": "rgba(21, 69, 73, 0.45)",
+    "addedAt": "2026-11-03T20:11:06.573Z"
   }
 ]

@@ -1,7 +1,10 @@
-import { put, list } from "@vercel/blob";
+import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
-const QUEUE_PATH = "queue/pending.json";
+// Un fichier par demande (le SDK ajoute un suffixe aléatoire au nom) :
+// pas de lecture-modification-écriture, donc deux ajouts rapprochés ne
+// s'écrasent pas. npm run studio traite tout le dossier queue/.
+const QUEUE_PATH = "queue/titre.json";
 
 export async function POST(req: Request) {
   let body: { url?: string; title?: string; artist?: string };
@@ -23,27 +26,13 @@ export async function POST(req: Request) {
   }
 
   try {
-    // On prend toujours le fichier le plus récent (par date d'upload) plutôt
-    // que d'écraser un chemin fixe — évite de dépendre d'une option
-    // d'écrasement dont la disponibilité varie selon la version du SDK.
-    const { blobs } = await list({ prefix: QUEUE_PATH });
-    const latest = blobs.sort(
-      (a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-    )[0];
-    let queue: Array<{ url: string; title: string; artist: string; requestedAt: string }> = [];
-    if (latest) {
-      const res = await fetch(latest.url);
-      if (res.ok) queue = await res.json();
-    }
-
-    queue.push({ url, title, artist, requestedAt: new Date().toISOString() });
-
-    await put(QUEUE_PATH, JSON.stringify(queue, null, 2), {
+    const item = { url, title, artist, requestedAt: new Date().toISOString() };
+    await put(QUEUE_PATH, JSON.stringify(item, null, 2), {
       access: "public",
       contentType: "application/json",
     });
 
-    return NextResponse.json({ ok: true, position: queue.length });
+    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Erreur file d'attente :", err);
     return NextResponse.json({ error: "Échec de l'enregistrement, réessaie" }, { status: 500 });
