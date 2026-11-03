@@ -150,7 +150,10 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  position: fixed;
+  /* Pas de position: fixed ici : en mode écran d'accueil iOS (barre d'état
+     translucide), WebKit borne les éléments fixed à une zone amputée de la
+     barre d'état → bande vide en bas. overflow + overscroll suffisent à
+     bloquer le défilement et le rebond de la page. */
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: manipulation;
