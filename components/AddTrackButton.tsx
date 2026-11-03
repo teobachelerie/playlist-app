@@ -44,7 +44,7 @@ export default function AddTrackButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="press-tactile w-11 h-11 rounded-full bg-surface shadow-raised-sm flex items-center justify-center text-text shrink-0"
+        className="press-tactile btn-rond w-11 h-11 flex items-center justify-center shrink-0"
         aria-label="Ajouter un titre"
       >
         <Plus size={20} />
@@ -52,7 +52,7 @@ export default function AddTrackButton() {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-4">
-          <div className="w-full max-w-sm bg-base rounded-2xl p-6 space-y-4 shadow-raised-lg">
+          <div className="feuille w-full max-w-sm p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-title-2 titre-encre">Ajouter un titre</h2>
               <button
@@ -60,7 +60,7 @@ export default function AddTrackButton() {
                   setOpen(false);
                   reset();
                 }}
-                className="p-2 text-muted"
+                className="p-2 text-tertiary"
                 aria-label="Fermer"
               >
                 <X size={20} />
@@ -78,7 +78,7 @@ export default function AddTrackButton() {
                     setOpen(false);
                     reset();
                   }}
-                  className="press-tactile w-full py-3 rounded-control bg-accent text-accent-text font-semibold"
+                  className="press-tactile btn-encre w-full py-3"
                 >
                   Fermer
                 </button>
@@ -91,7 +91,7 @@ export default function AddTrackButton() {
                   placeholder="Lien YouTube"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  className="w-full px-4 py-3 rounded-control bg-inset shadow-inset-sm text-text placeholder:text-tertiary"
+                  className="champ w-full px-4 py-3"
                 />
                 <input
                   type="text"
@@ -99,7 +99,7 @@ export default function AddTrackButton() {
                   placeholder="Titre du morceau"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-3 rounded-control bg-inset shadow-inset-sm text-text placeholder:text-tertiary"
+                  className="champ w-full px-4 py-3"
                 />
                 <input
                   type="text"
@@ -107,13 +107,13 @@ export default function AddTrackButton() {
                   placeholder="Nom de l'artiste"
                   value={artist}
                   onChange={(e) => setArtist(e.target.value)}
-                  className="w-full px-4 py-3 rounded-control bg-inset shadow-inset-sm text-text placeholder:text-tertiary"
+                  className="champ w-full px-4 py-3"
                 />
                 {status === "error" && <p className="text-red text-footnote">{errorMsg}</p>}
                 <button
                   type="submit"
                   disabled={status === "sending"}
-                  className="press-tactile w-full py-3 rounded-control bg-accent text-accent-text font-semibold disabled:opacity-50"
+                  className="press-tactile btn-encre w-full py-3 disabled:opacity-50"
                 >
                   {status === "sending" ? "Envoi…" : "Ajouter à la file"}
                 </button>

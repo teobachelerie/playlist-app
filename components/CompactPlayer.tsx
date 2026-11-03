@@ -48,13 +48,13 @@ function CompactPlayer({
 
   return (
     <div className="fixed inset-x-3 bottom-5 z-40">
-      <div className="bg-highlight shadow-raised-lg rounded-[32px] px-5 pt-4 pb-3">
+      <div className="feuille px-5 pt-4 pb-3">
         <div className="flex items-center gap-3">
           {track.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={track.coverUrl} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
+            <img src={track.coverUrl} alt="" className="pochette w-12 h-12 rounded-sm object-cover shrink-0" />
           ) : (
-            <div className="w-12 h-12 rounded-xl bg-inset shrink-0" />
+            <div className="w-12 h-12 rounded-sm bg-inset shrink-0" />
           )}
           <span className="min-w-0 flex-1">
             <span className="block truncate text-body titre-encre">{track.title}</span>
@@ -100,7 +100,7 @@ function CompactPlayer({
           </button>
           <button
             onClick={onTogglePlay}
-            className="press-tactile w-11 h-11 rounded-full bg-surface shadow-raised-sm flex items-center justify-center text-text"
+            className="press-tactile btn-encre w-11 h-11 flex items-center justify-center"
             aria-label={isPlaying ? "Pause" : "Lecture"}
           >
             {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}

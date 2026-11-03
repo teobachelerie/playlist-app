@@ -94,13 +94,7 @@
   --press-scale: 0.97;
   --press-opacity: 0.55;
 
-  /* Transitoire (lot 3) : anciens noms d'élévation → bordure fine */
-  --elev-raised-sm: var(--elev-border);
-  --elev-raised: var(--elev-border);
-  --elev-raised-lg: var(--elev-border), 0 8px 28px rgba(43, 39, 36, 0.1);
-  --elev-inset-sm: var(--elev-border-inset);
-  --elev-inset: var(--elev-border-inset);
-  --elev-press: var(--elev-border-inset);
+  --elev-float: var(--elev-border), 0 8px 28px rgba(43, 39, 36, 0.1);
 }
 
 [data-theme="dark"] {
@@ -122,7 +116,7 @@
   --surface-danger: rgba(229, 87, 74, 0.15);
 
   --elev-overlay: 0 -2px 24px rgba(0, 0, 0, 0.4);
-  --elev-raised-lg: var(--elev-border), 0 8px 28px rgba(0, 0, 0, 0.4);
+  --elev-float: var(--elev-border), 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -205,6 +199,61 @@ select {
   color: var(--ink-muted);
 }
 
+/* ---- Primitives ---- */
+
+/* Action principale : pilule encre, texte papier (inversée en sombre). */
+.btn-encre {
+  background: var(--ink);
+  color: var(--ink-inverse);
+  border-radius: var(--radius-pill);
+  font-weight: var(--weight-semibold);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Bouton icône secondaire : disque papier, bordure fine. */
+.btn-rond {
+  background: var(--surface-1);
+  color: var(--ink);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--elev-border);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.champ {
+  background: var(--surface-1);
+  color: var(--ink);
+  border-radius: var(--radius-field);
+  box-shadow: var(--elev-border-inset);
+  font-size: 16px;
+  outline: none;
+}
+.champ::placeholder {
+  color: var(--ink-muted);
+}
+.champ:focus {
+  box-shadow: inset 0 0 0 1px var(--ink-muted);
+}
+
+.carte {
+  background: var(--surface-1);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-border);
+}
+
+/* Feuille / fenêtre flottante : seule surface autorisée à une ombre douce. */
+.feuille {
+  background: var(--surface-1);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-float);
+}
+
+/* Pochettes : bordure fine, aucun filtre. */
+.pochette {
+  box-shadow: var(--elev-border);
+}
+
 ::-webkit-scrollbar {
   display: none;
 }
@@ -214,24 +263,6 @@ select {
    backdrop-filter : trop coûteux à l'ouverture sur téléphone. */
 .dynamic-bg {
   background: var(--surface-0);
-}
-
-.glass-surface {
-  background: var(--surface-1);
-  box-shadow: var(--elev-border);
-}
-
-/* Mini-barre : papier + bordure fine (le verre arrive au lot 4). */
-.mini-tint {
-  background: var(--surface-1);
-}
-
-/* Anciennes élévations "sur couleur" : désormais bordure fine. */
-.elev-oncolor-raised {
-  box-shadow: var(--elev-border);
-}
-.elev-oncolor-inset {
-  box-shadow: var(--elev-border-inset);
 }
 
 .press-tactile {

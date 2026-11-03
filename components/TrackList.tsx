@@ -51,7 +51,7 @@ function TrackList({
                   <button
                     onClick={() => onSelect(track.id)}
                     className={`press-tactile active:opacity-[0.55] w-full text-left flex items-center gap-3 my-1 px-3 py-2.5 rounded-control transition duration-base ease-standard ${
-                      active ? "bg-highlight shadow-raised-sm" : ""
+                      active ? "carte" : ""
                     }`}
                   >
                     {track.coverUrl ? (
@@ -61,7 +61,7 @@ function TrackList({
                         alt=""
                         loading="lazy"
                         decoding="async"
-                        className="w-11 h-11 rounded-sm object-cover shrink-0"
+                        className="pochette w-11 h-11 rounded-sm object-cover shrink-0"
                       />
                     ) : (
                       <div className="w-11 h-11 rounded-sm bg-inset shrink-0" />

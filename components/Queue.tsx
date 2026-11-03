@@ -11,7 +11,7 @@ function Queue({
   onSelect: (id: string) => void;
 }) {
   if (tracks.length === 0) {
-    return <p className="text-muted text-sm">Fin de la playlist.</p>;
+    return <p className="text-tertiary text-subhead">Fin de la playlist.</p>;
   }
 
   return (
@@ -21,17 +21,17 @@ function Queue({
         <button
           key={track.id}
           onClick={() => onSelect(track.id)}
-          className="w-full text-left flex items-center gap-3 py-2 hover:bg-inset rounded px-2"
+          className="press-tactile w-full text-left flex items-center gap-3 py-2 px-2 rounded-sm active:bg-inset"
         >
           {track.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={track.coverUrl} alt="" className="w-9 h-9 rounded object-cover shrink-0" />
+            <img src={track.coverUrl} alt="" className="pochette w-9 h-9 rounded-xs object-cover shrink-0" />
           ) : (
-            <div className="w-9 h-9 rounded bg-inset shrink-0" />
+            <div className="w-9 h-9 rounded-xs bg-inset shrink-0" />
           )}
           <span className="min-w-0">
-            <span className="block truncate text-text text-sm">{track.title}</span>
-            <span className="block truncate text-muted text-xs">{track.artist}</span>
+            <span className="block truncate text-text text-subhead font-medium">{track.title}</span>
+            <span className="block truncate text-tertiary text-footnote">{track.artist}</span>
           </span>
         </button>
       ))}

@@ -144,14 +144,11 @@ export default function PlayerSheet({
       />
 
       <div
-        className="dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-2xl shadow-2xl flex flex-col overflow-hidden z-40"
+        className="dynamic-bg fixed inset-x-0 bottom-0 h-dvh rounded-t-sheet shadow-overlay flex flex-col overflow-hidden z-40"
         style={
           {
             transform,
             transition: dragY === null ? "transform 0.35s cubic-bezier(0.32,0.72,0,1)" : "none",
-            "--color-soft": track.colorSoft,
-            "--color-light": track.colorLight,
-            "--color-dark": track.colorDark,
           } as React.CSSProperties
         }
       >
@@ -174,7 +171,7 @@ export default function PlayerSheet({
                 src={track.coverUrl}
                 alt=""
                 draggable={false}
-                className="w-16 h-16 rounded-md object-cover shrink-0 shadow-lg select-none"
+                className="pochette w-16 h-16 rounded-sm object-cover shrink-0 select-none"
               />
             ) : (
               <div className="w-16 h-16 rounded-md bg-inset shrink-0" />
@@ -207,9 +204,9 @@ export default function PlayerSheet({
             {panel === "cover" &&
               (track.coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={track.coverUrl} alt="" className="w-full aspect-square object-cover rounded-lg" />
+                <img src={track.coverUrl} alt="" className="pochette w-full aspect-square object-cover rounded-card" />
               ) : (
-                <div className="w-full aspect-square rounded-lg bg-inset" />
+                <div className="w-full aspect-square rounded-card bg-inset" />
               ))}
             {panel === "queue" && <Queue tracks={queue} onSelect={onSelectFromQueue} />}
           </div>
@@ -252,7 +249,7 @@ export default function PlayerSheet({
             </button>
             <button
               onClick={onTogglePlay}
-              className="press-tactile shadow-raised w-14 h-14 rounded-full bg-highlight flex items-center justify-center text-text"
+              className="press-tactile btn-encre w-14 h-14 flex items-center justify-center"
               aria-label={isPlaying ? "Pause" : "Lecture"}
             >
               {isPlaying ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" />}

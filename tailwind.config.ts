@@ -62,12 +62,7 @@ const config: Config = {
       },
       boxShadow: {
         border: "var(--elev-border)",
-        "raised-sm": "var(--elev-raised-sm)",
-        raised: "var(--elev-raised)",
-        "raised-lg": "var(--elev-raised-lg)",
-        "inset-sm": "var(--elev-inset-sm)",
-        inset: "var(--elev-inset)",
-        press: "var(--elev-press)",
+        float: "var(--elev-float)",
         overlay: "var(--elev-overlay)",
       },
       transitionDuration: {

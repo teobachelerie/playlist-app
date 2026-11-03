@@ -14,7 +14,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(toggleTheme())}
-      className="press-tactile w-11 h-11 rounded-full bg-surface shadow-raised-sm flex items-center justify-center text-text shrink-0"
+      className="press-tactile btn-rond w-11 h-11 flex items-center justify-center shrink-0"
       aria-label="Basculer le thème clair/sombre"
     >
       {theme === "dark" ? <Moon size={18} /> : <Sun size={18} />}
