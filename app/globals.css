@@ -157,6 +157,22 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* html a son propre fond : sinon le blanc par défaut apparaît là où body
+   s'arrête (bande blanche en bas en mode écran d'accueil). */
+html {
+  background: var(--surface-0);
+}
+
+/* Mode écran d'accueil (iOS) : avec viewport-fit=cover, 100dvh / 100 %
+   peuvent s'arrêter avant le bas réel de l'écran ; 100lvh couvre tout. */
+@media (display-mode: standalone) {
+  html,
+  body,
+  .app-ecran {
+    height: 100lvh;
+  }
+}
+
 body {
   -webkit-tap-highlight-color: transparent;
   background: var(--surface-base);

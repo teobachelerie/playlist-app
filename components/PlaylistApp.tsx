@@ -161,7 +161,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   }
 
   return (
-    <div className="fin-backdrop h-dvh overflow-hidden relative">
+    <div className="app-ecran fin-backdrop h-dvh overflow-hidden relative">
       <div className="h-full">
         <TrackList
           tracks={tracks}
