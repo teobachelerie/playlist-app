@@ -16,7 +16,7 @@ function Queue({
 
   return (
     <div className="h-full overflow-y-auto space-y-1">
-      <p className="text-muted text-xs uppercase tracking-wide mb-2">À suivre</p>
+      <p className="label-section mb-2">À suivre</p>
       {tracks.map((track) => (
         <button
           key={track.id}

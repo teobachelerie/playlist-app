@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+/* Inter 400 à 900 + Source Serif 4 italique 700 (mots forts uniquement). */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Source+Serif+4:ital,opsz,wght@1,8..60,700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -151,6 +152,57 @@ body {
   transition:
     background var(--duration-base) var(--ease-standard),
     color var(--duration-base) var(--ease-standard);
+}
+
+/* Safari iOS zoome sur un champ < 16 px. */
+input,
+textarea,
+select {
+  font-size: max(16px, 1em);
+}
+
+/* Signature : titres et gros chiffres en Inter Black, serré, interligne court. */
+.titre-encre {
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
+  color: var(--ink);
+}
+
+/* Mot fort : Source Serif 4 italique gras en dégradé signature.
+   En grand seulement, un ou deux mots par écran. */
+.mot-fort {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-serif);
+  background: var(--grad-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* évite que l'italique soit rogné par le clip */
+  padding-right: 0.08em;
+}
+
+/* Chiffres mis en avant : Inter Black en dégradé signature. */
+.chiffre-fort {
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
+  font-variant-numeric: tabular-nums;
+  background: var(--grad-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Labels de section : petites capitales, gris chaud. */
+.label-section {
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
 }
 
 ::-webkit-scrollbar {

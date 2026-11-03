@@ -180,8 +180,8 @@ export default function PlayerSheet({
               <div className="w-16 h-16 rounded-md bg-inset shrink-0" />
             )}
             <div className="min-w-0">
-              <h1 className="text-xl text-text truncate">{track.title}</h1>
-              <p className="text-muted truncate">{track.artist}</p>
+              <h1 className="text-title-2 titre-encre truncate">{track.title}</h1>
+              <p className="text-subhead text-tertiary truncate">{track.artist}</p>
               {playbackError && (
                 <p className="text-red text-xs mt-1">Lecture impossible pour ce titre — passe au suivant.</p>
               )}
@@ -228,7 +228,7 @@ export default function PlayerSheet({
               className="progress-range w-full"
               aria-label="Progression du titre"
             />
-            <div className="flex justify-between text-xs text-muted">
+            <div className="flex justify-between text-caption text-tertiary tabular-nums">
               <span>{formatTime(currentTime)}</span>
               <span>-{formatTime(Math.max(duration - currentTime, 0))}</span>
             </div>

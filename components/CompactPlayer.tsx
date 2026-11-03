@@ -57,8 +57,8 @@ function CompactPlayer({
             <div className="w-12 h-12 rounded-xl bg-inset shrink-0" />
           )}
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-body text-text leading-tight">{track.title}</span>
-            <span className="block truncate text-footnote text-muted leading-tight">
+            <span className="block truncate text-body titre-encre">{track.title}</span>
+            <span className="block truncate text-footnote text-tertiary leading-tight">
               {playbackError ? "Lecture impossible — passe au suivant" : track.artist}
             </span>
           </span>

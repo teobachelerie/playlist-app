@@ -29,8 +29,8 @@ function MiniPlayerBar({
         <div className="w-9 h-9 rounded-full bg-inset shrink-0" />
       )}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-footnote text-text leading-tight">{track.title}</span>
-        <span className="block truncate text-caption text-muted leading-tight">{track.artist}</span>
+        <span className="block truncate text-footnote titre-encre">{track.title}</span>
+        <span className="block truncate text-caption text-tertiary leading-tight">{track.artist}</span>
       </span>
       <span
         onClick={(e) => {

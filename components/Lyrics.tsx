@@ -55,7 +55,7 @@ const StaticLine = memo(function StaticLine({
   onClick: () => void;
 }) {
   return (
-    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-35 w-full flex flex-wrap">
+    <div onClick={onClick} className="cursor-pointer text-3xl font-black tracking-[-0.035em] leading-tight opacity-35 w-full flex flex-wrap">
       {words.length > 0 ? (
         words.map((w, j) => <StaticWord key={j} text={w} done={done} />)
       ) : (
@@ -77,7 +77,7 @@ function ActiveLine({
   onClick: () => void;
 }) {
   return (
-    <div onClick={onClick} className="cursor-pointer text-3xl font-bold leading-tight opacity-100 w-full flex flex-wrap">
+    <div onClick={onClick} className="cursor-pointer text-3xl font-black tracking-[-0.035em] leading-tight opacity-100 w-full flex flex-wrap">
       {words.length > 0 ? (
         words.map((w, j) => <AnimatedWord key={j} {...w} currentTime={currentTime} />)
       ) : (

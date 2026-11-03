@@ -54,7 +54,7 @@ export default function AddTrackButton() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-scrim p-4">
           <div className="w-full max-w-sm bg-base rounded-2xl p-6 space-y-4 shadow-raised-lg">
             <div className="flex items-center justify-between">
-              <h2 className="text-title-3 font-semibold text-text">Ajouter un titre</h2>
+              <h2 className="text-title-2 titre-encre">Ajouter un titre</h2>
               <button
                 onClick={() => {
                   setOpen(false);
@@ -78,7 +78,7 @@ export default function AddTrackButton() {
                     setOpen(false);
                     reset();
                   }}
-                  className="press-tactile w-full py-3 rounded-control bg-accent text-accent-text font-medium"
+                  className="press-tactile w-full py-3 rounded-control bg-accent text-accent-text font-semibold"
                 >
                   Fermer
                 </button>
@@ -113,7 +113,7 @@ export default function AddTrackButton() {
                 <button
                   type="submit"
                   disabled={status === "sending"}
-                  className="press-tactile w-full py-3 rounded-control bg-accent text-accent-text font-medium disabled:opacity-50"
+                  className="press-tactile w-full py-3 rounded-control bg-accent text-accent-text font-semibold disabled:opacity-50"
                 >
                   {status === "sending" ? "Envoi…" : "Ajouter à la file"}
                 </button>
