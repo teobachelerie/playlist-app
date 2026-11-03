@@ -19,7 +19,7 @@
   --glass-sheen: rgba(255, 255, 255, 0.42);
   --glass-edge: rgba(255, 255, 255, 0.75);
   --glass-shadow: 0 -6px 28px rgba(43, 39, 36, 0.1), 0 2px 10px rgba(43, 39, 36, 0.06);
-  --window-shadow: rgba(43, 39, 36, 0.06);
+  --window-shadow: rgba(43, 39, 36, 0.12);
 
   /* Encre et gris chauds */
   --ink: #2b2724;
@@ -124,7 +124,7 @@
   --glass-sheen: rgba(255, 255, 255, 0.06);
   --glass-edge: rgba(255, 255, 255, 0.12);
   --glass-shadow: 0 -6px 28px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.3);
-  --window-shadow: rgba(0, 0, 0, 0.28);
+  --window-shadow: rgba(0, 0, 0, 0.42);
 
   --ink: #f2efea;
   --ink-inverse: #2b2724; /* pilules d'action inversées */
@@ -163,17 +163,17 @@ html {
   background: var(--surface-0);
 }
 
-/* Mode écran d'accueil (iOS) : avec la barre d'état translucide, la hauteur
-   de page (100 %, 100dvh, 100lvh) est amputée de la barre d'état alors que
-   l'affichage commence tout en haut → bande vide en bas. --app-h est mesurée
-   par le script d'amorçage (layout.tsx) à partir de la taille réelle de
-   l'écran. */
-@media (display-mode: standalone) {
-  html,
-  body,
-  .app-ecran {
-    height: var(--app-h, 100lvh);
-  }
+/* Hauteur réelle de l'écran : en mode écran d'accueil iOS (barre d'état
+   translucide), 100 % / 100dvh / 100lvh sont amputés de la barre d'état alors
+   que l'affichage commence en haut → bande vide en bas. --app-h est mesurée
+   par le script d'amorçage (layout.tsx) : taille de l'écran quand il manque
+   exactement la barre d'état ou en mode app, innerHeight sinon. */
+html,
+body {
+  height: var(--app-h, 100%);
+}
+.app-ecran {
+  height: var(--app-h, 100dvh);
 }
 
 body {

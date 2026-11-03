@@ -73,7 +73,8 @@ basculement dans `lib/theme.ts`.
   saturate(170%)`, repli opaque sous `prefers-reduced-transparency` ou sans
   `backdrop-filter`. Pas de verre sur le lecteur plein écran (coûteux à l'ouverture).
 - Les pochettes apportent leurs couleurs ; aucune teinte de pochette sur l'UI.
-- Liste : cadre fixe à coupe nette (coins 20 px + liseré) en haut et en bas.
+- Liste : cadre fixe à coupe nette en haut et en bas ; la zone de défilement
+  porte elle-même papier, bordure et coins (aucun bord ne bouge au rebond).
   Le lecteur compact se **superpose** au cadre, même largeur, bas et coins
   alignés ; la liste réserve `--player-height` en marge intérieure.
 - Coins concentriques à l'écran (iPhone 17 Pro, 55 pt) : un élément posé à
