@@ -17,6 +17,9 @@ export const metadata = {
 
 export const viewport = {
   themeColor: "#E9E6E2",
+  // L'app dessine aussi sous la barre d'état et la barre d'accueil (le fond
+  // remplit tout l'écran) ; les marges sûres sont gérées par les composants.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -47,8 +47,12 @@ function CompactPlayer({
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="fixed inset-x-4 bottom-5 z-40">
-      <div className="verre-liquide rounded-[21px] px-5 pt-4 pb-3">
+    <div className="fixed z-40" style={{ left: "var(--edge)", right: "var(--edge)", bottom: "var(--edge)" }}>
+      <div
+        className="verre-liquide rounded-[var(--radius-frame)] px-5 pt-4"
+        // Dégage la barre d'accueil, qui passe sur le bas du lecteur.
+        style={{ paddingBottom: "max(12px, calc(env(safe-area-inset-bottom) - 12px))" }}
+      >
         <div className="flex items-center gap-3">
           {track.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element

@@ -75,7 +75,13 @@
   --hit-min: 44px;
   /* Hauteur du lecteur compact (≈ 186 px) + air : marge intérieure en bas de
      la liste pour que le dernier titre remonte au-dessus du verre. */
-  --player-height: 198px;
+  --player-height: 210px;
+
+  /* Écran iPhone 17 Pro : coins à 55 pt. Les éléments posés à --edge du bord
+     prennent un rayon concentrique (55 − 16 = 39 px) : même courbe que l'écran. */
+  --screen-radius: 55px;
+  --edge: 16px;
+  --radius-frame: calc(var(--screen-radius) - var(--edge));
 
   /* Rayons */
   --radius-sm: 12px;

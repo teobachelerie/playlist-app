@@ -157,6 +157,7 @@ export default function PlayerSheet({
             facile à attraper, comme les autres apps de musique. */}
         <div
           className="pt-2 pb-4 px-6 flex flex-col gap-4 cursor-grab active:cursor-grabbing touch-none shrink-0"
+          style={{ paddingTop: "calc(env(safe-area-inset-top) + 8px)" }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}

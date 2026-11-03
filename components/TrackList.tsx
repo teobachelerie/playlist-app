@@ -21,8 +21,12 @@ function TrackList({
   return (
     <div className="h-full flex flex-col">
       <div
-        className="shrink-0 z-10 flex items-center justify-between px-5 pt-6 pb-3"
-        style={{ paddingLeft: "var(--gutter-screen)", paddingRight: "var(--gutter-screen)" }}
+        className="shrink-0 z-10 flex items-center justify-between px-5 pb-3"
+        style={{
+          paddingTop: "calc(env(safe-area-inset-top) + 24px)",
+          paddingLeft: "var(--gutter-screen)",
+          paddingRight: "var(--gutter-screen)",
+        }}
       >
         <div>
           <h1 className="titre-encre text-display intro-fondu">
@@ -51,14 +55,17 @@ function TrackList({
         </div>
       ) : (
         // Cadre fixe, coupe nette en haut et en bas : la zone de défilement a
-        // les mêmes coins arrondis que la carte (20 px + 1 px de bordure), deux
+        // des coins concentriques à ceux de l'écran (--radius-frame), deux
         // liserés redessinent les bords. Le lecteur se pose par-dessus, aligné
         // sur le bas du cadre ; la liste réserve sa hauteur en marge intérieure.
-        <div className="relative flex-1 min-h-0 mx-4 mt-2" style={{ marginBottom: "var(--gutter-screen)" }}>
-          <div className="h-full overflow-y-auto rounded-[21px] p-px">
+        <div className="relative flex-1 min-h-0 mx-4 mt-2" style={{ marginBottom: "var(--edge)" }}>
+          <div className="h-full overflow-y-auto rounded-[var(--radius-frame)] p-px">
             <ul
               className="carte overflow-hidden"
-              style={currentId ? { paddingBottom: "var(--player-height)" } : undefined}
+              style={{
+                borderRadius: "calc(var(--radius-frame) - 1px)",
+                paddingBottom: currentId ? "var(--player-height)" : undefined,
+              }}
             >
               {tracks.map((track) => {
                 const active = track.id === currentId;
@@ -113,11 +120,11 @@ function TrackList({
           </div>
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-6 rounded-t-[21px] border-x border-t border-border"
+            className="pointer-events-none absolute inset-x-0 top-0 h-12 rounded-t-[var(--radius-frame)] border-x border-t border-border"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-6 rounded-b-[21px] border-x border-b border-border"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-12 rounded-b-[var(--radius-frame)] border-x border-b border-border"
           />
         </div>
       )}

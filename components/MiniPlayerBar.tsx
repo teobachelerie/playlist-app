@@ -18,7 +18,7 @@ function MiniPlayerBar({
   return (
     <button
       onClick={onOpen}
-      className="press-tactile verre fixed inset-x-12 bottom-4 z-40 flex items-center gap-2.5 pl-2 pr-2 py-2 rounded-full text-left"
+      className="press-tactile verre fixed inset-x-12 bottom-[max(16px,env(safe-area-inset-bottom))] z-40 flex items-center gap-2.5 pl-2 pr-2 py-2 rounded-full text-left"
     >
       {track.coverUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
