@@ -50,66 +50,67 @@ function TrackList({
           </p>
         </div>
       ) : (
-        <div
-          className="flex-1 overflow-y-auto"
-          style={{
-            maskImage: "linear-gradient(to bottom, transparent, black 16px, black calc(100% - 24px), transparent)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent, black 16px, black calc(100% - 24px), transparent)",
-          }}
-        >
-          <ul className="carte mx-4 mt-2 mb-44 overflow-hidden">
-            {tracks.map((track) => {
-              const active = track.id === currentId;
-              return (
-                <li key={track.id} className="border-b border-border last:border-b-0">
-                  <button
-                    onClick={() => onSelect(track.id)}
-                    aria-current={active ? "true" : undefined}
-                    className={`press-tactile active:opacity-[0.55] w-full text-left flex items-center gap-3 px-3 py-2.5 transition duration-base ease-standard ${
-                      active ? "bg-surface-2" : ""
-                    }`}
-                  >
-                    {track.coverUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={track.coverUrl}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="pochette w-11 h-11 rounded-sm object-cover shrink-0"
-                      />
-                    ) : (
-                      <div className="w-11 h-11 rounded-sm bg-inset shrink-0" />
-                    )}
-                    <span className="min-w-0 flex-1 flex items-baseline justify-between gap-4">
-                      <span className="min-w-0">
-                        <span
-                          className={`flex items-center gap-1.5 text-body font-medium ${
-                            active ? "text-orange" : "text-text"
-                          }`}
-                        >
-                          {active && (
-                            <span className="barres shrink-0" data-lecture={isPlaying} aria-hidden="true">
-                              <span />
-                              <span />
-                              <span />
-                            </span>
-                          )}
-                          <span className="truncate">{track.title}</span>
+        // Coupe nette en haut : la zone de défilement a les mêmes coins arrondis
+        // que la carte (20 px + 1 px de bordure), et un liseré fixe redessine le
+        // bord supérieur — la liste glisse dessous comme sous un cadre.
+        <div className="relative flex-1 min-h-0 mx-4 mt-2">
+          <div className="h-full overflow-y-auto rounded-t-[21px] px-px pt-px">
+            <ul className="carte mb-44 overflow-hidden">
+              {tracks.map((track) => {
+                const active = track.id === currentId;
+                return (
+                  <li key={track.id} className="border-b border-border last:border-b-0">
+                    <button
+                      onClick={() => onSelect(track.id)}
+                      aria-current={active ? "true" : undefined}
+                      className={`press-tactile active:opacity-[0.55] w-full text-left flex items-center gap-3 px-3 py-2.5 transition duration-base ease-standard ${
+                        active ? "bg-surface-2" : ""
+                      }`}
+                    >
+                      {track.coverUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={track.coverUrl}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="pochette w-11 h-11 rounded-sm object-cover shrink-0"
+                        />
+                      ) : (
+                        <div className="w-11 h-11 rounded-sm bg-inset shrink-0" />
+                      )}
+                      <span className="min-w-0 flex-1 flex items-baseline justify-between gap-4">
+                        <span className="min-w-0">
+                          <span
+                            className={`flex items-center gap-1.5 text-body font-medium ${
+                              active ? "text-orange" : "text-text"
+                            }`}
+                          >
+                            {active && (
+                              <span className="barres shrink-0" data-lecture={isPlaying} aria-hidden="true">
+                                <span />
+                                <span />
+                                <span />
+                              </span>
+                            )}
+                            <span className="truncate">{track.title}</span>
+                          </span>
+                          <span className="block truncate text-footnote text-tertiary">{track.artist}</span>
                         </span>
-                        <span className="block truncate text-footnote text-tertiary">{track.artist}</span>
+                        <span className="text-caption text-tertiary shrink-0 tabular-nums">
+                          {Math.floor(track.duration / 60)}:{String(track.duration % 60).padStart(2, "0")}
+                        </span>
                       </span>
-                      <span className="text-caption text-tertiary shrink-0 tabular-nums">
-                        {Math.floor(track.duration / 60)}:
-                        {String(track.duration % 60).padStart(2, "0")}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-6 rounded-t-[21px] border-x border-t border-border"
+          />
         </div>
       )}
     </div>
