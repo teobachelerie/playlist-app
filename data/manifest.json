@@ -1726,5 +1726,21 @@
     "colorLight": "rgba(163, 242, 249, 0.18)",
     "colorDark": "rgba(21, 69, 73, 0.45)",
     "addedAt": "2026-11-03T20:11:06.573Z"
+  },
+  {
+    "id": "rihanna-only-girl-in-the-world",
+    "title": "Only Girl (In the World)",
+    "artist": "Rihanna",
+    "duration": 251,
+    "audioUrl": "https://9ps2b6di2gi0lcw7.public.blob.vercel-storage.com/audio/rihanna-only-girl-in-the-world-vISYChg8T9NeGWPlJB7cVgwsAO1cPs.mp3",
+    "lyricsUrl": null,
+    "wordsUrl": null,
+    "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/c6/b1/6c/c6b16cd1-5580-a214-8745-c4f6faa490d6/16UMGIM59220.rgb.jpg/600x600bb.jpg",
+    "colorPrimary": "#8b6d5d",
+    "colorSecondary": "#532c3b",
+    "colorSoft": "rgba(252, 199, 169, 0.16)",
+    "colorLight": "rgba(254, 227, 212, 0.18)",
+    "colorDark": "rgba(76, 60, 51, 0.45)",
+    "addedAt": "2026-11-04T06:55:00.301Z"
   }
 ]
