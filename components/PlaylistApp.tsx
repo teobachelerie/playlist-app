@@ -6,7 +6,21 @@ import { shuffleAvoidingSameArtist } from "@/lib/shuffle";
 import TrackList from "@/components/TrackList";
 import CompactPlayer from "@/components/CompactPlayer";
 
+const ORDER_KEY = "playlist-ordre";
+
+// Applique l'ordre personnalisé enregistré (ids) ; les titres absents de cet
+// ordre (ajoutés depuis) gardent leur place relative, à la fin.
+function applySavedOrder(tracks: Track[], ids: string[]): Track[] {
+  const byId = new Map(tracks.map((t) => [t.id, t]));
+  const ordered = ids.map((id) => byId.get(id)).filter((t): t is Track => !!t);
+  const seen = new Set(ordered.map((t) => t.id));
+  return [...ordered, ...tracks.filter((t) => !seen.has(t.id))];
+}
+
 export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
+  // Ordre de la liste (personnalisable par glisser) ; base de la lecture
+  // quand l'aléatoire est coupé.
+  const [listOrder, setListOrder] = useState<Track[]>(tracks);
   const [order, setOrder] = useState<Track[]>(tracks);
   const [position, setPosition] = useState(0);
   const [hasSelected, setHasSelected] = useState(false); // rien ne joue tant qu'on n'a pas choisi un titre
@@ -19,7 +33,23 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const [airplaySupported, setAirplaySupported] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const current = hasSelected ? order[position] ?? null : null;
+  const current = hasSelected ? (order[position] ?? null) : null;
+
+  // Valeurs à jour pour les gestionnaires appelés hors rendu React (fin de
+  // titre, écran verrouillé) : en arrière-plan, ils doivent agir tout de suite.
+  const live = useRef({ order, position, repeat, shuffle, listOrder });
+  live.current = { order, position, repeat, shuffle, listOrder };
+
+  useEffect(() => {
+    try {
+      const ids = JSON.parse(localStorage.getItem(ORDER_KEY) ?? "null");
+      if (Array.isArray(ids)) {
+        const saved = applySavedOrder(tracks, ids);
+        setListOrder(saved);
+        setOrder(saved);
+      }
+    } catch {}
+  }, [tracks]);
 
   useEffect(() => {
     setAirplaySupported("webkitShowPlaybackTargetPicker" in HTMLMediaElement.prototype);
@@ -29,19 +59,20 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     setPlaybackError(false);
   }, [position]);
 
-  useEffect(() => {
-    if (isPlaying) {
-      // On ne force plus l'état ici à partir de la promesse de play() : elle
-      // peut parfois être rejetée (AbortError) par le navigateur alors que
-      // la lecture démarre quand même juste après — ça désynchronisait notre
-      // affichage (figé, "lecture impossible") alors que le son jouait
-      // vraiment. Les événements natifs onPlay/onPause de l'élément <audio>
-      // (plus bas) sont maintenant la seule source de vérité pour isPlaying.
-      audioRef.current?.play().catch((err) => {
-        console.error("play() rejeté (peut être transitoire) :", err);
-      });
-    }
-  }, [position, isPlaying]);
+  // Lance un titre tout de suite sur l'élément <audio>, sans attendre un
+  // rendu React. Indispensable en arrière-plan (Waze, écran verrouillé) : à
+  // la fin d'un titre iOS suspend la page dès que le son s'arrête, un rendu
+  // différé ne lancerait jamais le suivant.
+  function startTrack(idx: number, ord: Track[]) {
+    const track = ord[idx];
+    const el = audioRef.current;
+    if (!track || !el) return;
+    if (el.src !== track.audioUrl) el.src = track.audioUrl;
+    el.play().catch((err) => console.error("play() rejeté (peut être transitoire) :", err));
+    setOrder(ord);
+    setPosition(idx);
+    setHasSelected(true);
+  }
 
   // Suivi fin du temps de lecture via requestAnimationFrame plutôt que
   // l'événement natif "timeupdate" (qui ne se déclenche que ~4 fois/seconde
@@ -65,9 +96,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: current.title,
       artist: current.artist,
-      artwork: current.coverUrl
-        ? [{ src: current.coverUrl, sizes: "512x512", type: "image/jpeg" }]
-        : [],
+      artwork: current.coverUrl ? [{ src: current.coverUrl, sizes: "512x512", type: "image/jpeg" }] : [],
     });
     navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
     navigator.mediaSession.setActionHandler("nexttrack", playNext);
@@ -80,7 +109,7 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     // Neutralise les boutons de saut ±10s pour ne laisser que précédent/suivant.
     navigator.mediaSession.setActionHandler("seekforward", null);
     navigator.mediaSession.setActionHandler("seekbackward", null);
-  }, [current, position, order, repeat, shuffle]);
+  }, [current]);
 
   useEffect(() => {
     if ("mediaSession" in navigator) {
@@ -102,49 +131,57 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
   const togglePlayCb = useCallback(togglePlay, [isPlaying]);
 
   function playNext() {
+    const { order, position, repeat, shuffle, listOrder } = live.current;
     if (position + 1 < order.length) {
-      setPosition(position + 1);
-      setIsPlaying(true);
+      startTrack(position + 1, order);
       return;
     }
     // Fin de l'ordre de lecture.
     if (repeat) {
-      if (shuffle) setOrder(shuffleAvoidingSameArtist(tracks));
-      setPosition(0);
-      setIsPlaying(true);
+      startTrack(0, shuffle ? shuffleAvoidingSameArtist(listOrder) : order);
     } else {
-      setIsPlaying(false);
+      audioRef.current?.pause();
     }
   }
 
   function playPrevious() {
-    if (position > 0) {
-      setPosition(position - 1);
-      setIsPlaying(true);
-    }
+    const { order, position } = live.current;
+    if (position > 0) startTrack(position - 1, order);
   }
 
   function selectTrack(id: string) {
-    const idx = order.findIndex((t) => t.id === id);
-    if (idx === -1) return;
-    setPosition(idx);
-    setHasSelected(true);
-    setIsPlaying(true);
+    const ord = live.current.order;
+    const idx = ord.findIndex((t) => t.id === id);
+    if (idx !== -1) startTrack(idx, ord);
   }
-  const selectTrackCb = useCallback(selectTrack, [order]);
+  const selectTrackCb = useCallback(selectTrack, []);
+
+  // Nouvel ordre de la liste (glisser-déposer) : enregistré sur l'appareil,
+  // et repris par la lecture si l'aléatoire est coupé.
+  function reorder(next: Track[]) {
+    setListOrder(next);
+    try {
+      localStorage.setItem(ORDER_KEY, JSON.stringify(next.map((t) => t.id)));
+    } catch {}
+    if (!live.current.shuffle) {
+      setOrder(next);
+      if (current) setPosition(next.findIndex((t) => t.id === current.id));
+    }
+  }
+  const reorderCb = useCallback(reorder, [current]);
 
   function toggleShuffle() {
     if (!shuffle) {
       const currentTrack = current;
-      const rest = tracks.filter((t) => t.id !== currentTrack?.id);
+      const rest = listOrder.filter((t) => t.id !== currentTrack?.id);
       const shuffled = shuffleAvoidingSameArtist(rest);
       const newOrder = currentTrack ? [currentTrack, ...shuffled] : shuffled;
       setOrder(newOrder);
       setPosition(0);
     } else {
       const currentTrack = current;
-      setOrder(tracks);
-      setPosition(currentTrack ? tracks.findIndex((t) => t.id === currentTrack.id) : 0);
+      setOrder(listOrder);
+      setPosition(currentTrack ? listOrder.findIndex((t) => t.id === currentTrack.id) : 0);
     }
     setShuffle(!shuffle);
   }
@@ -164,10 +201,11 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
     <div className="app-ecran fin-backdrop h-dvh overflow-hidden relative">
       <div className="h-full">
         <TrackList
-          tracks={tracks}
+          tracks={listOrder}
           currentId={current?.id ?? null}
           isPlaying={isPlaying}
           onSelect={selectTrackCb}
+          onReorder={reorderCb}
         />
       </div>
 
@@ -191,24 +229,23 @@ export default function PlaylistApp({ tracks }: { tracks: Track[] }) {
         />
       )}
 
-      {current && (
-        <audio
-          ref={audioRef}
-          src={current.audioUrl}
-          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-          onEnded={playNext}
-          onPlay={() => {
-            setIsPlaying(true);
-            setPlaybackError(false);
-          }}
-          onPause={() => setIsPlaying(false)}
-          onError={() => {
-            console.error("Erreur de chargement audio pour :", current.title, current.audioUrl);
-            setPlaybackError(true);
-            setIsPlaying(false);
-          }}
-        />
-      )}
+      {/* Toujours monté, source posée à la main (startTrack) : React ne doit
+          pas réassigner src, ce qui relancerait le titre au début. */}
+      <audio
+        ref={audioRef}
+        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onEnded={playNext}
+        onPlay={() => {
+          setIsPlaying(true);
+          setPlaybackError(false);
+        }}
+        onPause={() => setIsPlaying(false)}
+        onError={() => {
+          console.error("Erreur de chargement audio pour :", current?.title, current?.audioUrl);
+          setPlaybackError(true);
+          setIsPlaying(false);
+        }}
+      />
     </div>
   );
 }
